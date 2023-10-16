@@ -27,10 +27,20 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Define the STATIC_URL to specify the URL for serving static files
+STATIC_URL = '/static/'
+
+# Define the STATICFILES_DIRS to specify where Django should look for static files
+STATICFILES_DIRS = [
+]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    'main',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
