@@ -7,8 +7,44 @@
     <title>Open Thread</title>
 </head>
 {% block content %}
+<style>
+    .container-main{
+        border: 2px solid rgb(43, 33, 234);
+        width: 100%;
+        padding: 1%;
+        border-radius: 10px;
+    }
+    #button-reply{
+        background-color: #3498db;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+    #container-button-reply{
+        width: 100%;
+        padding-top: 0.5%;
+        padding-bottom: 0.5%;
+    }
+</style>
+
 <body>
-    <h1>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
+    <div class="container-main">
+        <h1>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
+        <p>{{ main_thread.content }}</p>
+    </div>
+    <div id="container-button-reply">
+        <a id="button-reply" class="btn btn-primary" href="{% url 'main:reply' main_thread_id %}">Tambah Thread</a>
+    </div>
+
+    {% for reply in thread %}
+    <div class="container-main">
+            <p>{{ reply.content }}</p>
+    </div>
+    {% endfor %}
+        
 </body>
 {% endblock content %}
 </html>

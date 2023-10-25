@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from main.models import Person, MainThread
+from main.models import Person, MainThread, Thread
 
 class PersonForm(ModelForm):
     class Meta:
@@ -10,3 +10,8 @@ class MainThreadForm(ModelForm):
     class Meta:
         model = MainThread
         fields = ["title", "content"]
+
+class ThreadForm(ModelForm):
+    class Meta:
+        model = Thread
+        fields = ["content"]
