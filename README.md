@@ -75,25 +75,25 @@ Pengguna</summary>
 Rough Design</summary>
 
 - **Wireframe**
-![](static\readme\Wireframe.jpg)  
+![](./static/readme/Wireframe.jpg)  
 
 - **Sign Up Page**
-![](static\readme\SignUp.jpg)  
+![](./static/readme/SignUp.jpg)  
 
 - **Log In Page**
-![](static\readme\LogIn.jpg)  
+![](./static/readme/LogIn.jpg)  
 
 - **DiscussionsForum**
-![](static\readme\DiscussionsForum.jpg)  
+![](./static/readme/DiscussionsForum.jpg)  
 
 - **BookStore**
-![](static\readme\BookStore.jpg)  
+![](./static/readme/BookStore.jpg)  
 
 - **BookProgression**
-![](static\readme\BookProgression.jpg)  
+![](./static/readme/BookProgression.jpg)  
 
 - **MagicQuiz**
-![](static\readme\MagicQuiz.jpg)
-![](static\readme\MagicQuiz2.jpg)
+![](./static/readme/MagicQuiz.jpg)
+![](./static/readme/MagicQuiz2.jpg)
 
 </details>

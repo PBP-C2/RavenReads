@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply
+from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, book_progression, get_reading_progress
 
 app_name = 'main'
 
@@ -11,5 +11,7 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
     path('make_thread/', make_thread, name='make_thread'),
     path('discussion/<int:id>/', open_main_thread, name='open_main_thread'),
-    path('discussion/<int:id>/reply/', reply, name='reply')
+    path('discussion/<int:id>/reply/', reply, name='reply'),
+    path('book-progression/', book_progression, name='book_progression'),
+    path('get-progression/', get_reading_progress, name='get_reading_progress')
 ]
