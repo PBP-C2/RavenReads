@@ -153,3 +153,6 @@ def reply(request, id):
         'form': form,
     }
     return render(request, 'reply.html', context)
+
+def magic_quiz(request):
+    return render(request, 'magic_quiz.html')
