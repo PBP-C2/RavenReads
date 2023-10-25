@@ -4,12 +4,13 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 import datetime
-from main.models import Person, MainThread, Thread
+from main.models import Person, MainThread, Thread, Book, ReadingProgress
 from main.forms import PersonForm, MainThreadForm, ThreadForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.core import serializers
 
 # Create your views here.
 
@@ -163,3 +164,11 @@ def book_store(request):
     #     'books': books,  # Kirim daftar buku ke template
     # }
     return render(request, 'book_store.html')
+
+# @login_required(login_url='/login')
+def book_progression(request):
+    return render(request, 'book_progression.html')
+
+def get_reading_progress(request):
+    progress = ReadingProgress.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', progress))

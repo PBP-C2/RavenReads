@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Book Progression</title>
+{% endblock meta %}
+
+{% block content %}
+<style>
+    .test {
+        background-color: #aaaaaa;
+        color: white;
+        border-radius: 10px;
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .progress-table {
+        background-color: white;
+        color: black;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+<div class="test">
+    <h3>Book Progression</h3>
+    <table class="table progress-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Book Title</th>
+                <th>Progress Bar</th>
+                <th>Progress</th>
+            </tr>
+        </thead>
+        <tbody id="progress_table_body">
+            <tr>
+                <td><img src="" alt=""></td>
+                <td>Book Title</td>
+                <td>
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar" style="width: 50%"></div>
+                    </div>
+                </td>
+                <td>26/70 <span><button type="button" class="btn btn-primary"></button></span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Untuk refresh progression nanti
+    //
+    // async function getProgress() {
+    //     return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json())
+    // }
+
+    // async function refreshProgress() {
+    //     document.getElementById("progress_table_body").innerHTML = ""
+    //     const progresses = await getProgress()
+    //     let htmlString = ``
+    //     progresses.forEach((progress) => {
+    //         htmlString += `<tr>
+    //                         <td><img src=${...}</td>
+    //                         <td>${...}</td>
+    //                         <td>...</td>
+    //                         <td>${...}/${...}<button>...</button>`
+    //     })
+    //     document.getElementById("progress_table_body").innerHTML = htmlString
+    // }
+
+    // refreshProgress()
+</script>
+{% endblock content %}
