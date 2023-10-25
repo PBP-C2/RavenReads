@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .header {
+            text-align: left;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card {
+            width: 300px;
+            height: 450px;
+            margin: 10px;
+            perspective: 1000px;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        .front,
+        .back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        .back {
+            transform: rotateY(180deg);
+            text-align: left;
+            padding: 10px;
+            display: none;
+            background-color: white;
+        }
+        .card img {
+            max-width: 100%;
+            max-height: 60%;
+        }
+        .card h2 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .card p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Book Store</h1>
+    </div>
+    <div class="container" id="bookContainer">
+       
+    </div>
+
+    <script>
+        // Dataset buku dalam bentuk array JavaScript
+        const booksData = [
+            { title: "Judul Buku 1", description: "Deskripsi buku 1", cover: "cover1.jpg", rating: "5", price: "$10.00" },
+            { title: "Judul Buku 2", description: "Deskripsi buku 2", cover: "cover2.jpg", rating: "4.5", price: "$12.00" },
+            { title: "Judul Buku 3", description: "Deskripsi buku 3", cover: "cover3.jpg", rating: "4.8", price: "$15.00" },
+            { title: "Judul Buku 4", description: "Deskripsi buku 4", cover: "cover4.jpg", rating: "4.2", price: "$9.99" },
+            { title: "Judul Buku 5", description: "Deskripsi buku 5", cover: "cover5.jpg", rating: "4.7", price: "$14.50" },
+            { title: "Judul Buku 6", description: "Deskripsi buku 6", cover: "cover6.jpg", rating: "4.0", price: "$7.99" },
+            { title: "Judul Buku 7", description: "Deskripsi buku 7", cover: "cover7.jpg", rating: "4.5", price: "$12.50" },
+            { title: "Judul Buku 8", description: "Deskripsi buku 8", cover: "cover8.jpg", rating: "4.3", price: "$11.99" },
+            { title: "Judul Buku 9", description: "Deskripsi buku 9", cover: "cover9.jpg", rating: "4.8", price: "$15.00" },
+            { title: "Judul Buku 10", description: "Deskripsi buku 10", cover: "cover10.jpg", rating: "4.5", price: "$12.50" }
+        ];
+
+        // Ambil elemen kontainer
+        const bookContainer = document.getElementById("bookContainer");
+
+        // Loop melalui data buku dan buat kartu untuk setiap buku
+        booksData.forEach(book => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            // Bagian depan kartu
+            const front = document.createElement("div");
+            front.classList.add("front");
+            const cover = document.createElement("img");
+            cover.src = book.cover;
+            const title_front = document.createElement("h2");
+            title_front.textContent = book.title;
+            front.appendChild(cover);
+            front.appendChild(title_front);
+            card.appendChild(front);
+
+            // Bagian belakang kartu
+            const back = document.createElement("div");
+            back.classList.add("back");
+            const title = document.createElement("h2");
+            title.textContent = `Title: ${book.title}`;
+            const rating = document.createElement("p");
+            rating.textContent = `Rating: ${book.rating}`;
+            const price = document.createElement("p");
+            price.textContent = `Price: ${book.price}`;
+            const description = document.createElement("p");
+            description.textContent = `Description: ${book.description}`;
+            back.appendChild(title);
+            back.appendChild(rating);
+            back.appendChild(price);
+            back.appendChild(description);
+            card.appendChild(back);
+
+            card.addEventListener("mouseenter", () => {
+                back.style.display = "block"; // Tampilkan bagian belakang kartu
+            });
+
+            card.addEventListener("mouseleave", () => {
+                back.style.display = "none"; // Sembunyikan bagian belakang kartu
+            });
+
+            bookContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
+
