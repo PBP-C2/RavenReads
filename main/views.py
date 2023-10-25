@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 import datetime
 from main.models import Person, MainThread, Thread
-from main.forms import PersonForm, MainThreadForm
+from main.forms import PersonForm, MainThreadForm, ThreadForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
@@ -129,5 +129,27 @@ def open_main_thread(request, id):
         'main_thread': main_thread,
         'thread': thread,
         'form': form,
+        'main_thread_id':id,
     }
     return render(request, 'open_main_thread.html', context)
+
+def reply(request, id):
+    main_thread = MainThread.objects.get(pk=id)
+    form = ThreadForm()
+
+    if request.method == "POST":
+        form = ThreadForm(request.POST)
+        if form.is_valid():
+            thread = form.save(commit=False)
+            thread.user = request.user
+            thread.main_thread = main_thread
+            thread.save()
+            messages.success(request, 'Your thread has been successfully created!')
+            return redirect('main:forum_discussion')
+
+    context = {
+        'user': request.user,
+        'main_thread': main_thread,
+        'form': form,
+    }
+    return render(request, 'reply.html', context)
