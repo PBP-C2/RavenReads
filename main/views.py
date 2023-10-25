@@ -153,3 +153,13 @@ def reply(request, id):
         'form': form,
     }
     return render(request, 'reply.html', context)
+
+def book_store(request):
+    # person = Person.objects.filter(user=request.user)
+
+    # books = Book.objects.all()  # 
+
+    # context = {
+    #     'books': books,  # Kirim daftar buku ke template
+    # }
+    return render(request, 'book_store.html')
