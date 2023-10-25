@@ -84,40 +84,39 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Register</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="form" onsubmit="return false;">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="region" class="col-form-label">Region:</label>
-                            <input type="text" class="form-control" id="region" name="region"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="amount" class="col-form-label">Amount:</label>
-                            <input type="number" class="form-control" id="amount" name="amount"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="amount_collected" class="col-form-label">Amount Collected:</label>
-                            <input type="number" class="form-control" id="amount_collected" name="amount_collected"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="col-form-label">Description:</label>
-                            <textarea class="form-control" id="description" name="description"></textarea>
-                        </div>
+                    <form method="POST" >  
+                        {% csrf_token %}  
+                        <table>  
+                            {{ form.as_table }} 
+                            {{ form_person.as_table }}
+                            <tr>  
+                                <td></td>
+                                <td><input type="submit" name="submit" value="Daftar"/></td>  
+                            </tr>   
+                        </table>    
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+                    {% if messages %}  
+                        <ul>   
+                            {% for message in messages %}  
+                                <p>{{ message }}</p>  
+                            {% endfor %}  
+                        </ul>   
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#button_add").click(function() {
+                $("form").submit(); // Submit the form when the button is clicked
+            });
+        });
+    </script>
 </body>
 {% endblock content %}
