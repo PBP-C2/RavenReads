@@ -8,7 +8,7 @@ from main.views import (book_progression, book_store, forum_discussion,
 app_name = 'main'
 
 urlpatterns = [
-    path('', magic_quiz, name='magic_quiz'),
+    path('', show_main, name='show_main'),
     path('login/', login_user, name='login'),
     path('register/', register, name='register'),
     path('discussion/', forum_discussion, name='forum_discussion'),
@@ -19,5 +19,6 @@ urlpatterns = [
     path('book-progression/', book_progression, name='book_progression'),
     path('get-progression/', get_reading_progress, name='get_reading_progress'),
     path('book_store/', book_store, name='book_store'),
-    path('import_books_from_csv/',import_books_from_csv, name='import_books_from_csv')
+    path('import_books_from_csv/',import_books_from_csv, name='import_books_from_csv'),
+    path('magic_quiz/', magic_quiz, name='magic_quiz')
 ]
