@@ -28,14 +28,3 @@ class Thread(models.Model):
     images = models.ImageField(upload_to='images/')
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-
-# Asal bikin model Book dan Progress hehe
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    cover = models.ImageField(upload_to='images/')
-    pages = models.IntegerField()
-
-class ReadingProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    progress = models.IntegerField()
