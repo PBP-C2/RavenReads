@@ -1,6 +1,6 @@
 from django.urls import path
-from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_json, new_main_thread_ajax
-
+from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_wizard_json, new_main_thread_ajax
+from main.views import get_main_thread_muggle_json, get_thread_json
 app_name = 'main'
 
 urlpatterns = [
@@ -12,6 +12,9 @@ urlpatterns = [
     path('make_thread/', make_thread, name='make_thread'),
     path('discussion/<int:id>/', open_main_thread, name='open_main_thread'),
     path('discussion/<int:id>/reply/', reply, name='reply'),
-    path('get_main_thread_json/', get_main_thread_json, name='get_main_thread_json'),
-    path('new_main_thread_ajax/', new_main_thread_ajax, name='new_main_thread_ajax')
+    path('get_wizard_json/', get_main_thread_wizard_json, name='get_wizard_json'),
+    path('get_muggle_json/', get_main_thread_muggle_json, name='get_muggle_json'),
+    path('new_main_thread_ajax/', new_main_thread_ajax, name='new_main_thread_ajax'),
+    path('get_thread_json/<int:id>', get_thread_json, name='get_thread_json')
+
 ]

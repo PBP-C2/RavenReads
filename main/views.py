@@ -143,6 +143,11 @@ def open_main_thread(request, id):
     }
     return render(request, 'open_main_thread.html', context)
 
+def get_thread_json(request, id):
+    main_thread = MainThread.objects.get(pk=id)
+    thread = Thread.objects.filter(main_thread=main_thread)
+    return HttpResponse(serializers.serialize('json', thread))
+
 def reply(request, id):
     main_thread = MainThread.objects.get(pk=id)
     form = ThreadForm()
@@ -165,9 +170,15 @@ def reply(request, id):
     }
     return render(request, 'reply.html', context)
 
-def get_main_thread_json(request):
-    main_thread_item = MainThread.objects.all()
-    return HttpResponse(serializers.serialize('json', main_thread_item))
+def get_main_thread_wizard_json(request):
+    wizard = Person.objects.filter(tipe="Wizard")
+    wizard_thread = MainThread.objects.filter(person__in=wizard)
+    return HttpResponse(serializers.serialize('json', wizard_thread))
+
+def get_main_thread_muggle_json(request):
+    muggle = Person.objects.filter(tipe="Muggle")
+    muggle_thread = MainThread.objects.filter(person__in=muggle)
+    return HttpResponse(serializers.serialize('json', muggle_thread))
 
 @csrf_exempt
 def new_main_thread_ajax(request):
@@ -183,6 +194,7 @@ def new_main_thread_ajax(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
 def book_store(request):
     # person = Person.objects.filter(user=request.user)
 

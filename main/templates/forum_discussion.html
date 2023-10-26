@@ -46,7 +46,7 @@
 <body>
     <div class="container" id="main-container">
         {% for thread in wizard_thread %}
-        <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread('{{ thread.id }}')">
+        <!-- <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread('{{ thread.id }}')">
             <div class="row g-0">
               <div class="col-md-4">
                 <img src="..." class="img-fluid rounded-start" alt="...">
@@ -59,7 +59,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         {% endfor %}
         {% for thread in muggle_thread %}
         <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread('{{ thread.id }}')">
@@ -120,22 +120,45 @@
     </div>
 </body>
 <script>
-  async function getMainThreads() {
-    return fetch("{% url 'main:get_main_thread_json' %}").then((res) => res.json())
+  async function getMainThreadsWizard() {
+    return fetch("{% url 'main:get_wizard_json' %}").then((res) => res.json())
   }
+  async function getMainThreadsMuggle() {
+    return fetch("{% url 'main:get_muggle_json' %}").then((res) => res.json())
+  }
+
 
   async function refreshPage() {
     document.getElementById("main-thread-ajax").innerHTML = ""
-    const mainThreads = await getMainThreads()
+    const mainThreadsWizard = await getMainThreadsWizard()
+    const mainThreadsMuggle = await getMainThreadsMuggle()
 
     let htmlString = ``
 
-    mainThreads.forEach((thread) => {
+    mainThreadsWizard.forEach((thread) => {
+        htmlString += `\n
+          <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(${ thread.pk })">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="..." class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">${ thread.fields.title}</h5>
+                  <p class="card-text">${ thread.fields.content}</p>
+                  <p class="card-text"><small class="text-body-secondary">Posted at ${ thread.fields.date_created}</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ` 
+      })  
+    mainThreadsMuggle.forEach((thread) => {
         htmlString += `\n
           <p1>${thread.fields.title}</p1>
         ` 
       })  
-      document.getElementById("main-thread-ajax").innerHTML = htmlString
+    document.getElementById("main-thread-ajax").innerHTML = htmlString
     }
     refreshPage()
 
@@ -151,11 +174,6 @@
     }
 
     document.getElementById("button_add_ajax").onclick = makeNewMainThread
-
-    // var obj = document.getElementById("card-wizard");
-    // obj.onclick = function () {
-    //     alert("You just clicked the object!");
-    // };
     
     function openThread(ID){
         const url = "{% url 'main:open_main_thread' 0 %}".replace("0", ID);
