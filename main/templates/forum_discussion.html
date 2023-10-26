@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <title>Document</title>
 </head>
 
@@ -27,60 +28,141 @@
     #main-container{
         padding: 10px;
     }
+    #profile-wizard{
+        border: 2px solid rgb(43, 33, 234);
+        height: 100%;
+        width: 20%;
+    }
+    #profile{
+        border: 2px solid rgb(43, 33, 234);
+        height: 100%;
+        width: 100%;
+    }
+    #card-wizard{
+        background-color: #fb8805;
+    }
 </style>
 
 <body>
     <div class="container" id="main-container">
-        {% for threads in main_thread %}
-            <div class="row justify-content-center">
-                <div class="col-4 w-100" id="bruh">
-                    <div class="d-flex h-100">
-                        <div class="card w-100 mb-3 my-auto">
-                            <div class="card-body">
-                                <h5 class="card-header"> {{ threads.title }} </h5>
-                                <p class="card-text"> {{ threads.content }}</p>
-                                <a href="{% url 'main:open_main_thread' threads.id %}" class="btn btn-primary">Open Thread</a>
-                            </div>
-                        </div>
-                    </div>
+        {% for thread in wizard_thread %}
+        <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread('{{ thread.id }}')">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="..." class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ thread.title }}</h5>
+                  <p class="card-text">{{ thread.content }}</p>
+                  <p class="card-text"><small class="text-body-secondary">Posted at {{ thread.date_created }}</small></p>
                 </div>
+              </div>
             </div>
+          </div>
+        {% endfor %}
+        {% for thread in muggle_thread %}
+        <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread('{{ thread.id }}')">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="..." class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ thread.title }}</h5>
+                  <p class="card-text">{{ thread.content }}</p>
+                  <p class="card-text"><small class="text-body-secondary">Posted at {{ thread.date_created }}</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
         {% endfor %}
     </div>
-    <div class="corner-button">
-        <a href="{% url 'main:make_thread' %}">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="button_add">Add Product by AJAX</button>
-        </a>
+
+    <div class="container" id="main-thread-ajax" style="border: 2px solid red">
+
     </div>
-    <div class="modal fade wizard" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <div class="corner-button">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Make New Thread Modal
+        </button>
+    </div>
+
+
+    <!-- Modal for Making New Thread -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Make a Thread!</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" >  
-                        {% csrf_token %}  
-                        <table>  
-                            {{ form.as_table }} 
-                            <tr>  
-                                <td></td>
-                                <td><input type="submit" name="submit" value="Post"/></td>  
-                            </tr>   
-                        </table>    
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="col-form-label">Content:</label>
+                            <input type="text" class="form-control" id="content" name="content"></input>
+                        </div>
                     </form>
-                    {% if messages %}  
-                        <ul>   
-                            {% for message in messages %}  
-                                <p>{{ message }}</p>  
-                            {% endfor %}  
-                        </ul>   
-                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal">Make New Threads</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
+<script>
+  async function getMainThreads() {
+    return fetch("{% url 'main:get_main_thread_json' %}").then((res) => res.json())
+  }
+
+  async function refreshPage() {
+    document.getElementById("main-thread-ajax").innerHTML = ""
+    const mainThreads = await getMainThreads()
+
+    let htmlString = ``
+
+    mainThreads.forEach((thread) => {
+        htmlString += `\n
+          <p1>${thread.fields.title}</p1>
+        ` 
+      })  
+      document.getElementById("main-thread-ajax").innerHTML = htmlString
+    }
+    refreshPage()
+
+    function makeNewMainThread() {
+        fetch("{% url 'main:new_main_thread_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshPage)
+
+        document.getElementById("form").reset()
+        
+        return false
+    }
+
+    document.getElementById("button_add_ajax").onclick = makeNewMainThread
+
+    // var obj = document.getElementById("card-wizard");
+    // obj.onclick = function () {
+    //     alert("You just clicked the object!");
+    // };
+    
+    function openThread(ID){
+        const url = "{% url 'main:open_main_thread' 0 %}".replace("0", ID);
+    
+        // Redirect to the generated URL
+        window.location.href = url;
+    }
+</script>
 {% endblock content %}
 </html>
