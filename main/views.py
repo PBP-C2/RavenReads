@@ -1,16 +1,20 @@
-from django.shortcuts import render
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
-from django.urls import reverse
-from django.http import HttpResponseRedirect
 import datetime
-from main.models import Person, MainThread, Thread
-from main.forms import PersonForm, MainThreadForm, ThreadForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.core import serializers
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
+
+from main.forms import MainThreadForm, PersonForm, ThreadForm
+from main.models import Book, MainThread, Person, ReadingProgress, Thread
+
+import csv
+from django.shortcuts import render
+from .models import Book
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -153,6 +157,41 @@ def reply(request, id):
         'form': form,
     }
     return render(request, 'reply.html', context)
+
+
+def import_books_from_csv(file_path):
+    with open(file_path, 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            Book.objects.create(
+                title=row['title'],
+                cover=row['cover'],
+                pages=int(row['pages']),
+                author=row['author'],
+                rating=float(row['rating']),
+                price=int(row['price']),
+                description=row['description']
+            )
+
+def book_store(request):
+    # Panggil fungsi import_books_from_csv dengan menyediakan path ke file CSV dataset
+    file_path = 'D:\My Documents\College Task 3\PBP\tugas_kelompok\books.csv'  
+    import_books_from_csv(file_path)
+    # Query untuk mengambil semua objek Book dari basis data
+    books = Book.objects.all()
+
+    context = {
+        'books': books,  # Kirim daftar buku ke template
+    }
+    return render(request, 'book_store.html', context)
+
+# @login_required(login_url='/login')
+def book_progression(request):
+    return render(request, 'book_progression.html')
+
+# def get_reading_progress(request):
+#     progress = ReadingProgress.objects.filter(user=request.user)
+#     return HttpResponse(serializers.serialize('json', progress))
 
 def magic_quiz(request):
     return render(request, 'magic_quiz.html')

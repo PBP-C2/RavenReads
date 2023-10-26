@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .header {
+            text-align: left;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card {
+            width: 300px;
+            height: 450px;
+            margin: 10px;
+            perspective: 1000px;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        .front,
+        .back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        .back {
+            transform: rotateY(180deg);
+            text-align: left;
+            padding: 10px;
+            display: none;
+            background-color: white;
+        }
+        .card img {
+            max-width: 100%;
+            max-height: 60%;
+        }
+        .card h2 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .card p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Book Store</h1>
+    </div>
+    <div class="container" id="bookContainer">
+       
+    </div>
+
+    <script>
+        // Dataset buku dalam bentuk array JavaScript
+        // const booksData = [
+        // {% for book in books %}
+        //     {
+        //         title: "{{ book.title }}",
+        //         description: "{{ book.description }}",
+        //         cover: "{{ book.cover.url }}",
+        //         rating: "{{ book.rating }}",
+        //         price: "${{ book.price }}"
+        //     }{% if not forloop.last %},{% endif %}
+        // {% endfor %}
+        // ];
+
+        // Ambil elemen kontainer
+        const bookContainer = document.getElementById("bookContainer");
+
+        // Loop melalui data buku dan buat kartu untuk setiap buku
+        booksData.forEach(book => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            // Bagian depan kartu
+            const front = document.createElement("div");
+            front.classList.add("front");
+            const cover = document.createElement("img");
+            cover.src = book.cover;
+            const title_front = document.createElement("h2");
+            title_front.textContent = book.title;
+            front.appendChild(cover);
+            front.appendChild(title_front);
+            card.appendChild(front);
+
+            // Bagian belakang kartu
+            const back = document.createElement("div");
+            back.classList.add("back");
+            const title = document.createElement("h2");
+            title.textContent = `Title: ${book.title}`;
+            const rating = document.createElement("p");
+            rating.textContent = `Rating: ${book.rating}`;
+            const price = document.createElement("p");
+            price.textContent = `Price: ${book.price}`;
+            const description = document.createElement("p");
+            description.textContent = `Description: ${book.description}`;
+            back.appendChild(title);
+            back.appendChild(rating);
+            back.appendChild(price);
+            back.appendChild(description);
+            card.appendChild(back);
+
+            card.addEventListener("mouseenter", () => {
+                back.style.display = "block"; // Tampilkan bagian belakang kartu
+            });
+
+            card.addEventListener("mouseleave", () => {
+                back.style.display = "none"; // Sembunyikan bagian belakang kartu
+            });
+
+            bookContainer.appendChild(card);
+        });
+    </script>
+</body>
+</html>
+
