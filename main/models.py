@@ -42,3 +42,4 @@ class ReadingProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     progress = models.IntegerField()
+    date_updated = models.DateTimeField(auto_now=True)

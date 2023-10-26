@@ -189,6 +189,6 @@ def book_store(request):
 def book_progression(request):
     return render(request, 'book_progression.html')
 
-def get_reading_progress(request):
-    progress = ReadingProgress.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize('json', progress))
+# def get_reading_progress(request):
+#     progress = ReadingProgress.objects.filter(user=request.user)
+#     return HttpResponse(serializers.serialize('json', progress))
