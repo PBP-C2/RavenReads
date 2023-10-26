@@ -10,11 +10,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from main.forms import MainThreadForm, PersonForm, ThreadForm
-from main.models import Book, MainThread, Person, ReadingProgress, Thread
-
+# from main.models import MainThread, Person, ReadingProgress, Thread
+from main.models import MainThread, Person, Thread
 import csv
 from django.shortcuts import render
-from .models import Book
+from book.models import Book
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -159,36 +159,31 @@ def reply(request, id):
     return render(request, 'reply.html', context)
 
 
-def import_books_from_csv(file_path):
-    with open(file_path, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            Book.objects.create(
-                title=row['title'],
-                cover=row['cover'],
-                pages=int(row['pages']),
-                author=row['author'],
-                rating=float(row['rating']),
-                price=int(row['price']),
-                description=row['description']
-            )
+# def import_books_from_csv(file_path):
+#     with open(file_path, 'r') as csv_file:
+#         csv_reader = csv.DictReader(csv_file)
+#         for row in csv_reader:
+#             Book.objects.get_or_create(
+#                 title=row['title'],
+#                 cover=row['cover'],
+#                 pages=int(row['pages']),
+#                 author=row['author'],
+#                 rating=float(row['rating']),
+#                 price=int(row['price']),
+#                 description=row['description']
+#             )
 
 def book_store(request):
-    # Panggil fungsi import_books_from_csv dengan menyediakan path ke file CSV dataset
-    file_path = 'D:\My Documents\College Task 3\PBP\tugas_kelompok\books.csv'  
-    import_books_from_csv(file_path)
     # Query untuk mengambil semua objek Book dari basis data
     books = Book.objects.all()
 
-    context = {
-        'books': books,  # Kirim daftar buku ke template
-    }
-    return render(request, 'book_store.html', context)
+    return HttpResponse(serializers.serialize("json", books), content_type="application/json")
+
 
 # @login_required(login_url='/login')
 def book_progression(request):
     return render(request, 'book_progression.html')
 
-def get_reading_progress(request):
-    progress = ReadingProgress.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize('json', progress))
+# def get_reading_progress(request):
+#     progress = ReadingProgress.objects.filter(user=request.user)
+#     return HttpResponse(serializers.serialize('json', progress))

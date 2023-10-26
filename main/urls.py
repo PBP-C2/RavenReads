@@ -1,7 +1,7 @@
 from django.urls import path
 
-from main.views import (book_progression, book_store, forum_discussion,
-                        get_reading_progress, import_books_from_csv,
+from main.views import (book_progression, forum_discussion,
+                        # get_reading_progress,
                         login_user, logout_user, make_thread, open_main_thread,
                         register, reply, show_main)
 
@@ -17,7 +17,7 @@ urlpatterns = [
     path('discussion/<int:id>/', open_main_thread, name='open_main_thread'),
     path('discussion/<int:id>/reply/', reply, name='reply'),
     path('book-progression/', book_progression, name='book_progression'),
-    path('get-progression/', get_reading_progress, name='get_reading_progress'),
-    path('book_store/', book_store, name='book_store'),
-    path('import_books_from_csv/',import_books_from_csv, name='import_books_from_csv')
+    # path('get-progression/', get_reading_progress, name='get_reading_progress'),
+    # path('book_store/', book_store, name='book_store'),
+    # path('import_books_from_csv/',import_books_from_csv, name='import_books_from_csv')
 ]
