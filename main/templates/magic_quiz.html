@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Magic Quiz</title>
+{% endblock meta %}
+
+{% block content %}
+<style>
+    
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Page</title>
+</head>
+<body>
+
+    <div id="question-container">
+        <h2 id="question"></h2>
+        <form id="quiz-form">
+            <input type="radio" name="answer" value="2">A. Option 1<br>
+            <input type="radio" name="answer" value="5">B. Option 2<br>
+            <input type="radio" name="answer" value="7">C. Option 3<br>
+            <input type="radio" name="answer" value="10">D. Option 4<br>
+        </form>
+        <button onclick="checkAnswer()">Next</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        let totalPoints = 0;
+        let currentQuestion = 0;
+
+        const questions = [
+            {
+                question: "Question 1: Sample Question 1?",
+                options: [
+                    { option: "Option 1", value: 2 },
+                    { option: "Option 2", value: 5 },
+                    { option: "Option 3", value: 7 },
+                    { option: "Option 4", value: 10 }
+                ]
+            },
+            {
+                question: "Question 2: Sample Question 2?",
+                options: [
+                    { option: "Option 1", value: 2 },
+                    { option: "Option 2", value: 5 },
+                    { option: "Option 3", value: 7 },
+                    { option: "Option 4", value: 10 }
+                ]
+            },
+            // Add more questions here...
+        ];
+
+        function displayQuestion() {
+            if (currentQuestion < questions.length) {
+                let current = questions[currentQuestion];
+                document.getElementById('question').innerText = current.question;
+                let options = current.options;
+                let optionsHtml = '';
+                for (let i = 0; i < options.length; i++) {
+                    optionsHtml += `<input type="radio" name="answer" value="${options[i].value}">${String.fromCharCode(65 + i)}. ${options[i].option}<br>`;
+                }
+                document.getElementById('quiz-form').innerHTML = optionsHtml;
+            } else {
+                alert("Quiz completed! Total Points: " + totalPoints);
+                // Here you can add code to send the totalPoints to the server using an API call.
+            }
+        }
+
+        function checkAnswer() {
+            let selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (selectedOption) {
+                totalPoints += parseInt(selectedOption.value);
+                document.getElementById('result').innerText = "Total Points: " + totalPoints;
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                alert("Please select an answer!");
+            }
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
+
+{% endblock content %}
