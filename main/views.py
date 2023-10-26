@@ -183,3 +183,12 @@ def new_main_thread_ajax(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+def book_store(request):
+    # person = Person.objects.filter(user=request.user)
+
+    # books = Book.objects.all()  # 
+
+    # context = {
+    #     'books': books,  # Kirim daftar buku ke template
+    # }
+    return render(request, 'book_store.html')
