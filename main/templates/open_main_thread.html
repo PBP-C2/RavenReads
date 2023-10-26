@@ -1,4 +1,6 @@
 {% extends 'base.html'%}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,19 +34,81 @@
 
 <body>
     <div class="container-main">
-        <h1>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
+        <div class="container-profile">
+            <div class="row">
+                <div class="col-2">
+                    <img src="{% static 'readme/wizard_logo.jpg' %}" alt="Profile Picture" width="50px" height="50px">
+                </div>
+                <div class="col-10">
+                    <h3>{{ main_thread.person.name }}</h3>                    
+                </div>
+            </div>
+        </div>
+        <h5>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
         <p>{{ main_thread.content }}</p>
     </div>
     <div id="container-button-reply">
-        <a id="button-reply" class="btn btn-primary" href="{% url 'main:reply' main_thread_id %}">Tambah Thread</a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Make New Thread Modal
+          </button>
     </div>
 
-    {% for reply in thread %}
-    <div class="container-main">
-            <p>{{ reply.content }}</p>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="content" class="col-form-label">Content:</label>
+                            <input type="text" class="form-control" id="content" name="content"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal">Make New Threads</button>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endfor %}
+    
+      <div class="container" id="test-ajax">
+
+      </div>
+
+        {% for reply in thread %}
+        <div class="container-main">
+                <p>{{ reply.content }}</p>
+        </div>
+        {% endfor %}
+
         
 </body>
+<script>
+    async function getThreadsReply() {
+        return fetch("{% url 'main:get_wizard_json' %}").then((res) => res.json())
+    }
+
+    async function refreshPage() {
+        document.getElementById("test-ajax").innerHTML = ""
+        const replyThread = await getThreadsReply()
+
+        let htmlString = ``
+
+        replyThread.forEach((thread) => {
+            htmlString += `\n
+                <p1>${thread.fields.content}</p1>\n
+                ` 
+        })  
+            document.getElementById("test-ajax").innerHTML = htmlString
+    }
+    refreshPage() 
+    window.addEventListener("load", refreshPage);
+</script>
 {% endblock content %}
 </html>
