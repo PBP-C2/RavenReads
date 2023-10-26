@@ -28,3 +28,17 @@ class Thread(models.Model):
     images = models.ImageField(upload_to='images/')
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    cover = models.ImageField(upload_to='images/')
+    pages = models.IntegerField()
+    author = models.CharField(max_length=200)
+    rating = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.IntegerField()
+    description = models.TextField()
+
+class ReadingProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    progress = models.IntegerField()

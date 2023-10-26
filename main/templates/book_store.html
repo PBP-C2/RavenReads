@@ -70,18 +70,17 @@
 
     <script>
         // Dataset buku dalam bentuk array JavaScript
-        const booksData = [
-            { title: "Judul Buku 1", description: "Deskripsi buku 1", cover: "cover1.jpg", rating: "5", price: "$10.00" },
-            { title: "Judul Buku 2", description: "Deskripsi buku 2", cover: "cover2.jpg", rating: "4.5", price: "$12.00" },
-            { title: "Judul Buku 3", description: "Deskripsi buku 3", cover: "cover3.jpg", rating: "4.8", price: "$15.00" },
-            { title: "Judul Buku 4", description: "Deskripsi buku 4", cover: "cover4.jpg", rating: "4.2", price: "$9.99" },
-            { title: "Judul Buku 5", description: "Deskripsi buku 5", cover: "cover5.jpg", rating: "4.7", price: "$14.50" },
-            { title: "Judul Buku 6", description: "Deskripsi buku 6", cover: "cover6.jpg", rating: "4.0", price: "$7.99" },
-            { title: "Judul Buku 7", description: "Deskripsi buku 7", cover: "cover7.jpg", rating: "4.5", price: "$12.50" },
-            { title: "Judul Buku 8", description: "Deskripsi buku 8", cover: "cover8.jpg", rating: "4.3", price: "$11.99" },
-            { title: "Judul Buku 9", description: "Deskripsi buku 9", cover: "cover9.jpg", rating: "4.8", price: "$15.00" },
-            { title: "Judul Buku 10", description: "Deskripsi buku 10", cover: "cover10.jpg", rating: "4.5", price: "$12.50" }
-        ];
+        // const booksData = [
+        // {% for book in books %}
+        //     {
+        //         title: "{{ book.title }}",
+        //         description: "{{ book.description }}",
+        //         cover: "{{ book.cover.url }}",
+        //         rating: "{{ book.rating }}",
+        //         price: "${{ book.price }}"
+        //     }{% if not forloop.last %},{% endif %}
+        // {% endfor %}
+        // ];
 
         // Ambil elemen kontainer
         const bookContainer = document.getElementById("bookContainer");
