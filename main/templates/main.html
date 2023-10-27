@@ -60,7 +60,8 @@
 
         .main-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             padding: 10px 20px;
             position: absolute;
@@ -73,6 +74,7 @@
         .navbar-container {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
             padding: 10px 20px;
             position: absolute;
@@ -82,18 +84,39 @@
             z-index: 2;
             color: #ffffff;
         }
+
+        .navbar-container ul {
+            display: flex;
+            list-style-type: none;
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .navbar-container ul li {
+            margin-right: 20px;
+        }
+
+        .navbar-container ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 24px;
+        }
+
+        .navbar-container ul li a:hover {
+            color: #FFC146;
+        }
     </style>
 </head>
 
 <body>
     <div class="navbar-container">
-        <div class="container"></div>
-            <h3>Discussion</h3>
-            <h3>Book Store</h3>
-            <h3>Spellbook</h3>
-            <h3>MagicQuiz</h3>
-            <h3>Book Progression</h3>
-        </div>
+        <ul>
+            <li><a href="{% url 'main:forum_discussion' %}">Discussion</a></li>
+            <li><a href="{% url 'main:book_store' %}">Book Store</a></li>
+            <li><a href="{% url 'main:show_main' %}">Spellbook</a></li>
+            <li><a href="{% url 'main:magic_quiz' %}">MagicQuiz</a></li>
+            <li><a href="{% url 'main:book_progression' %}">Book Progression</a></li>
+        </ul>
     </div>
 
     <div class="main-container container">
