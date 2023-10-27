@@ -1,3 +1,21 @@
+import json
+from django.shortcuts import render
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages  
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.http import HttpResponseRedirect, HttpResponseNotFound
+import datetime
+
+import requests
+from main.models import BookStore, Person, MainThread, ReadingProgress, Thread
+from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.core import serializers
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 
 from django.contrib import messages
@@ -14,12 +32,12 @@ from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import MainThread, Person, Thread
 import csv
 from django.shortcuts import render
-from book.models import Book
+from main.models import Book
 # Create your views here.
 
 @login_required(login_url='/login')
 def show_main(request):
-    person = Person.objects.all()
+    person = Person.objects.get(user=request.user)
     context = {
         'user': request.user,
         'person': person,
@@ -28,11 +46,11 @@ def show_main(request):
     return render(request, "main.html", context)
 
 def register(request):
-    form_user = UserCreationForm()
+    form_user = UserForm()
     form_person = PersonForm()
 
     if request.method == "POST":
-        form_user = UserCreationForm(request.POST)
+        form_user = UserForm(request.POST)
         form_person = PersonForm(request.POST)
         if form_user.is_valid() and form_person.is_valid():
             user = form_user.save()  # Save the user object
@@ -73,7 +91,11 @@ def logout_user(request):
 
 @login_required(login_url='/login')
 def forum_discussion(request):
+    wizard = Person.objects.filter(tipe="Wizard")
+    muggle = Person.objects.filter(tipe="Muggle")
     main_thread = MainThread.objects.all()
+    wizard_thread = MainThread.objects.filter(person__in=wizard)
+    muggle_thread = MainThread.objects.filter(person__in=muggle)
     thread = Thread.objects.all()
     form = MainThreadForm()
 
@@ -81,7 +103,7 @@ def forum_discussion(request):
         form = MainThreadForm(request.POST)
         if form.is_valid():
             main_thread = form.save(commit=False)
-            main_thread.user = request.user
+            main_thread.person = Person.objects.get(user=request.user)
             main_thread.thread_count = 0
             main_thread.save()
             messages.success(request, 'Your thread has been successfully created!')
@@ -92,6 +114,8 @@ def forum_discussion(request):
         'main_thread': main_thread,
         'thread': thread,
         'form': form,
+        'wizard_thread': wizard_thread,
+        'muggle_thread': muggle_thread,
     }
     return render(request, 'forum_discussion.html', context)
 
@@ -102,7 +126,7 @@ def make_thread(request):
         form = MainThreadForm(request.POST)
         if form.is_valid():
             main_thread = form.save(commit=False)
-            main_thread.user = request.user
+            main_thread.person = Person.objects.get(user=request.user)
             main_thread.thread_count = 0
             main_thread.save()
             messages.success(request, 'Your thread has been successfully created!')
@@ -116,17 +140,18 @@ def make_thread(request):
 def open_main_thread(request, id):
     main_thread = MainThread.objects.get(pk=id)
     thread = Thread.objects.filter(main_thread=main_thread)
-    form = MainThreadForm()
+    form = ThreadForm()
 
     if request.method == "POST":
-        form = MainThreadForm(request.POST)
+        form = ThreadForm(request.POST)
         if form.is_valid():
-            main_thread = form.save(commit=False)
-            main_thread.user = request.user
-            main_thread.thread_count = 0
-            main_thread.save()
+            thread = form.save(commit=False)
+            thread.person = Person.objects.get(user=request.user)
+            thread.main_thread = main_thread
+            thread.save()
             messages.success(request, 'Your thread has been successfully created!')
-            return redirect('main:forum_discussion')
+            url = reverse("main:open_main_thread", kwargs={"id":id})
+            return redirect(url)
 
     context = {
         'user': request.user,
@@ -137,6 +162,11 @@ def open_main_thread(request, id):
     }
     return render(request, 'open_main_thread.html', context)
 
+def get_thread_json(request, id):
+    main_thread = MainThread.objects.get(pk=id)
+    thread = Thread.objects.filter(main_thread=main_thread)
+    return HttpResponse(serializers.serialize('json', thread))
+
 def reply(request, id):
     main_thread = MainThread.objects.get(pk=id)
     form = ThreadForm()
@@ -145,11 +175,12 @@ def reply(request, id):
         form = ThreadForm(request.POST)
         if form.is_valid():
             thread = form.save(commit=False)
-            thread.user = request.user
+            thread.person = Person.objects.get(user=request.user)
             thread.main_thread = main_thread
             thread.save()
             messages.success(request, 'Your thread has been successfully created!')
-            return redirect('main:forum_discussion')
+            url = reverse("main:open_main_thread", kwargs={"id":id})
+            return redirect(url)
 
     context = {
         'user': request.user,
@@ -158,32 +189,75 @@ def reply(request, id):
     }
     return render(request, 'reply.html', context)
 
+def get_main_thread_wizard_json(request):
+    wizard = Person.objects.filter(tipe="Wizard")
+    wizard_thread = MainThread.objects.filter(person__in=wizard)
+    return HttpResponse(serializers.serialize('json', wizard_thread))
 
-# def import_books_from_csv(file_path):
-#     with open(file_path, 'r') as csv_file:
-#         csv_reader = csv.DictReader(csv_file)
-#         for row in csv_reader:
-#             Book.objects.get_or_create(
-#                 title=row['title'],
-#                 cover=row['cover'],
-#                 pages=int(row['pages']),
-#                 author=row['author'],
-#                 rating=float(row['rating']),
-#                 price=int(row['price']),
-#                 description=row['description']
-#             )
+def get_main_thread_muggle_json(request):
+    muggle = Person.objects.filter(tipe="Muggle")
+    muggle_thread = MainThread.objects.filter(person__in=muggle)
+    return HttpResponse(serializers.serialize('json', muggle_thread))
+
+@csrf_exempt
+def new_main_thread_ajax(request):
+    if request.method == 'POST':
+        person = Person.objects.get(user=request.user)
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+        thread_count = 0
+
+        new_main_thread = MainThread(title=title, content=content, person=person, thread_count=thread_count)
+        new_main_thread.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
 
 def book_store(request):
-    # Query untuk mengambil semua objek Book dari basis data
-    books = Book.objects.all()
+    
+    json_file_path = "book/fixtures/Books.json"  # Ganti dengan path yang sesuai
+    context = {}
 
-    return HttpResponse(serializers.serialize("json", books), content_type="application/json")
+    try : 
+        with open(json_file_path, "r") as json_file:
+            json_data = json.load(json_file)
 
+        # Ambil data dari model BookStore
+        bookstores = BookStore.objects.all()
+
+        # Gabungkan data JSON dengan data dari model BookStore
+        combined_data = []
+        for bookstore in bookstores:
+            data = {
+                "title": bookstore.title,
+                "cover": bookstore.cover.url,
+                "author": bookstore.author,
+                "rating": float(bookstore.rating),
+                "price": int(bookstore.price),
+                "description": bookstore.description
+            }
+            combined_data.append(data)
+
+            # Tambahkan data JSON ke data dari model BookStore
+            combined_data.extend(json_data)
+
+            context = {
+                'books': combined_data,
+            }
+    except Exception as error:
+        print("Gagal mengambil data buku:", error)
+
+    return render(request, 'book_store.html', context)
 
 # @login_required(login_url='/login')
 def book_progression(request):
     return render(request, 'book_progression.html')
 
-# def get_reading_progress(request):
-#     progress = ReadingProgress.objects.filter(user=request.user)
-#     return HttpResponse(serializers.serialize('json', progress))
+def get_reading_progress(request):
+    progress = ReadingProgress.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', progress))
+
+def magic_quiz(request):
+    return render(request, 'magic_quiz.html')

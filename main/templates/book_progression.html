@@ -48,6 +48,16 @@
                 </td>
                 <td>26/70 <span><button type="button" class="btn btn-primary"></button></span></td>
             </tr>
+            <tr>
+                <td><img src="" alt=""></td>
+                <td>Book Title</td>
+                <td>
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar" style="width: 50%"></div>
+                    </div>
+                </td>
+                <td>26/70 <span><button type="button" class="btn btn-primary"></button></span></td>
+            </tr>
         </tbody>
     </table>
 </div>
@@ -65,14 +75,21 @@
     //     let htmlString = ``
     //     progresses.forEach((progress) => {
     //         htmlString += `<tr>
-    //                         <td><img src=${...}</td>
-    //                         <td>${...}</td>
-    //                         <td>...</td>
-    //                         <td>${...}/${...}<button>...</button>`
+    //                         <td><img src=${progress.fields.book.cover}</td>
+    //                         <td>${progress.fields.book.title}</td>
+    //                         <td>
+    //                             <div class="progress" role="progressbar">
+    //                                 <div class="progress-bar" style="width: ${(progress.fields.progress / progress.fields.book.pages) * 100}%"></div>
+    //                             </div>
+    //                         </td>
+    //                         <td>${progress.fields.progress}/${progress.fields.book.pages} <span><button type="button" class="btn btn-primary"></button></span></td>`
     //     })
     //     document.getElementById("progress_table_body").innerHTML = htmlString
     // }
 
     // refreshProgress()
+    // function incrementPage() {
+        
+    // }
 </script>
 {% endblock content %}

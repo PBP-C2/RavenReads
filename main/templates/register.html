@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block meta %}
     <title>Register</title>
@@ -59,6 +60,14 @@
         background-image: url(https://oyster.ignimgs.com/mediawiki/apis.ign.com/genshin-impact/2/24/Key_art_EN.png);
         background-size: cover;
     }
+    .form-group{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+    .form-select{
+        margin-top: 1%;
+        margin-bottom: 1%;
+    }
 </style> 
 
 <body>   
@@ -68,19 +77,20 @@
             <div class="container-left">
                 <div class="container-left-inside">
                     <h1 class="text-wizard" style="color:white">Wizard</h1>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-wizard">Be a Wizard!</button>
                 </div>
             </div>
             <div class="container-right">
                 <div class="container-right-inside">
                     <h1 style="color:white">Muggle</h1>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-muggle">Be a Muggle!</button>
                 </div>
             </div>
         </div> 
     </div>
 
-    <!-- Modal untuk Wizard -->
-    <div class="modal fade wizard" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal untuk Muggle -->
+    <div class="modal fade wizard" id="modal-wizard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -91,14 +101,100 @@
                     <form method="POST" >  
                         {% csrf_token %}  
                         <table>  
-                            {{ form.as_table }} 
-                            {{ form_person.as_table }}
+                    
+                            <div class="form-group">
+                               {% render_field form.username type="text" class="form-control" id="exampleInputUsername" placeholder="Username" %}
+                            </div>
+
+                            <div class="form-group">
+                               {% render_field form.password1 type="password" class="form-control" id="exampleInputPassword" placeholder="Password" %}
+                            </div>  
+                            <div class="form-group">
+                                {% render_field form.password2 type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirm Password" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.name type="name" class="form-control" id="exampleInputPassword1" placeholder="Input Name" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.email type="email" class="form-control" id="exampleInputPassword1" placeholder="Input Email" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.tipe type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" Value="Wizard" %}
+                            </div>
+
+                            <div class="form-select">
+                                {% render_field form_person.gender type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" %}
+                            </div>
+                            
                             <tr>  
                                 <td></td>
                                 <td><input type="submit" name="submit" value="Daftar"/></td>  
                             </tr>   
                         </table>    
                     </form>
+                    {{ form.errors }}
+                    {% if messages %}  
+                        <ul>   
+                            {% for message in messages %}  
+                                <p>{{ message }}</p>  
+                            {% endfor %}  
+                        </ul>   
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Wizard -->
+    <div class="modal fade wizard" id="modal-muggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Register</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" >  
+                        {% csrf_token %}  
+                        <table>  
+                    
+                            <div class="form-group">
+                               {% render_field form.username type="text" class="form-control" id="exampleInputUsername" placeholder="Username" %}
+                            </div>
+
+                            <div class="form-group">
+                               {% render_field form.password1 type="password" class="form-control" id="exampleInputPassword" placeholder="Password" %}
+                            </div>  
+                            <div class="form-group">
+                                {% render_field form.password2 type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirm Password" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.name type="name" class="form-control" id="exampleInputPassword1" placeholder="Input Name" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.email type="email" class="form-control" id="exampleInputPassword1" placeholder="Input Email" %}
+                            </div>
+
+                            <div class="form-group">
+                                {% render_field form_person.tipe type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" value="Muggle" readonly="readonly"%}
+                            </div>
+
+                            <div class="form-select">
+                                {% render_field form_person.gender type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" %}
+                            </div>
+                            
+                            <tr>  
+                                <td></td>
+                                <td><input type="submit" name="submit" value="Daftar"/></td>  
+                            </tr>   
+                        </table>    
+                    </form>
+                    {{ form.errors }}
                     {% if messages %}  
                         <ul>   
                             {% for message in messages %}  
