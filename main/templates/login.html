@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block meta %}
     <title>Login</title>
@@ -13,15 +14,16 @@
         margin: 50px auto;
         margin-bottom: 0px;
         font-family: 'Roboto', sans-serif;
-        border: 2px solid red;
         display: flex; /* Use flexbox for centering */
         flex-direction: column; /* Stack content vertically */
         justify-content: center; /* Center content vertically */
         align-items: center; /* Center content horizontally */
         text-align: center; /* Center text within the container */
+        border-radius:30px;
+        background-color: 	#222f5b;
     }
     .login-text{
-        color: #a2a2a2;
+        color: white;
         text-align: center;
         margin-bottom: 20px;
     }
@@ -48,14 +50,41 @@
     .ask-register{
         margin-top: 15%;
     }
+    #submit-button{
+        background-color:#946b2d;
+        border: none;
+        transition: all 0.2s;
+    }
+    #submit-button:hover{
+        transform: scale(1.1);
+    }
 
 </style>
 
-<div class = "login">
-    <h1 class="login-text">So, you're a wizard?</h1>
-    <form method="POST" action="">
+<div class ="container-fluid login">
+    <div class="container-fluid" id="main-container">
+        <h1 class="login-text">So, you're a wizard?</h1>
+    <form method="POST" action="" class="row g-3 needs-validation" novalidate>
         {% csrf_token %}
-        <table class="table-input">
+        <div class="row-md-4">
+            <input type="text" class="form-control" id="validationCustom01" placeholder="Username" name="username" required>
+            <div class="valid-feedback"  style="color:white;">
+                Looks good!
+            </div>
+        </div>
+        <div class="row-md-4">
+            <input type="password" class="form-control" id="validationCustom02" placeholder="Password" name="password" required>
+            <div class="valid-feedback" style="color:white;">
+              Looks good!
+            </div>
+        </div>
+        <div class="row-md-4">
+            <button class="btn btn-primary" type="submit" id="submit-button">Submit</button>
+        </div>
+    </div>
+    
+
+        <!-- <table class="table-input">
             <tr>
                 <td class="td-form"><input type="text" name="username" placeholder="Username" class="form-control"></td>
             </tr>
@@ -67,21 +96,44 @@
             <tr>
                 <td><input class="btn login_btn" type="submit" value="Login"></td>
             </tr>
-        </table>
+        </table> -->
     </form>
-    {% if messages %}
+    <div class="container">
+        {% if messages %}
         <ul>
             {% for message in messages %}
-                <li>{{ message }}</li>
+                <p style="color:white;">{{ message }}</p>
             {% endfor %}
         </ul>
     {% endif %}
+    </div>
+    
     <div class="ask-register">
-        Not a wizard yet?
+        <p style="color:white;">Not a wizard yet?</p>
         <a href="{% url 'main:register' %}">Be a wizard here!</a>   
     </div>
      
 
 </div>
+<script>
+    (() => {
+    'use strict'
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+        }, false)
+    })
+    })()
+</script>
 
 {% endblock content %}

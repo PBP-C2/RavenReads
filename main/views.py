@@ -211,6 +211,19 @@ def new_main_thread_ajax(request):
 
     return HttpResponseNotFound()
 
+def new_thread_ajax(request, id):
+    if request.method == 'POST':
+        person = Person.objects.get(user=request.user)
+        main_thread = MainThread.objects.get(pk=id)
+        content = request.POST.get("content")
+
+        new_thread = Thread(content=content, person=person, main_thread=main_thread)
+        new_thread.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
 def import_books_from_csv(file_path):
     with open(file_path, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
