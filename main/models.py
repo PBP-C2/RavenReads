@@ -13,7 +13,7 @@ class Person(models.Model):
     gender = models.CharField(max_length=200)
 
 class MainThread(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1) 
     title = models.CharField(max_length=200)
     content = models.TextField()
     images = models.ImageField(upload_to='images/')
@@ -22,7 +22,7 @@ class MainThread(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
 class Thread(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1)
     main_thread = models.ForeignKey(MainThread, on_delete=models.CASCADE)
     content = models.TextField()
     images = models.ImageField(upload_to='images/')
