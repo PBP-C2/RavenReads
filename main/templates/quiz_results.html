@@ -100,7 +100,7 @@
             for (let i = startIdx; i < endIdx && i < books.length; i++) {
                 const item = books[i];
                 const bookCard = `
-                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <div class="col-md-4 d-flex align-items-start justify-content-center">
                     <div class="card" style="width: 100%;">
                         <img src="${item.fields.image_url_l}" class="card-img-top" alt="Book Image" style="width: 100%; height: auto;">
                         <div class="card-body text-center">
@@ -118,7 +118,6 @@
             }
         }
 
-        // Call the function to show the books when the page loads
         showBooks();
     </script>
 </body>
