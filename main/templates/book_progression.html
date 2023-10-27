@@ -14,7 +14,7 @@
         font-family: 'Roboto', sans-serif;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
+        justify-content: space-evenly;   
         text-align: center;
         align-items: center;
     }
@@ -22,49 +22,178 @@
     .progress-table {
         background-color: white;
         color: black;
+        width: 100%;
         border-radius: 10px;
         overflow: hidden;
     }
-</style>
+
+    /* .progress-table th {
+        background-color: #dddddd;
+    } */
+    
+    /* .table-striped>tbody>tr:nth-child(odd)>td {
+    background-color: #eeeeee;
+    } */
+
+    .image-column {
+        width: 20%;
+        vertical-align: middle;
+        border: 1px solid red;
+    }
+    
+    .title-column {
+        width: 20%;
+        vertical-align: middle;
+        border: 1px solid blue;
+    }
+    
+    td.title-column {
+        text-align: left;
+        vertical-align: middle; 
+    }
+
+    .progress-bar-column {
+        width: 30%;
+        vertical-align: middle;
+        border: 1px solid green;
+    }
+    
+    .progress-column {
+        width: 15%;
+        vertical-align: middle;
+        border: 1px solid brown;
+    }
+
+    .review-column {
+        width: 15%;
+        vertical-align: middle;
+        border: 1px solid darkgoldenrod;
+    }
+
+    #reviewModal {
+        color: black;
+    }
+
+    #reviewModal .modal-body{
+        text-align: left;
+    }
+    </style>
+
 <div class="test">
     <h3>Book Progression</h3>
-    <table class="table progress-table">
+    <table class="table progress-table table-striped">
         <thead>
             <tr>
-                <th>Image</th>
-                <th>Book Title</th>
-                <th>Progress Bar</th>
-                <th>Progress</th>
+                <th class="image-column">Image</th>
+                <th class="title-column">Book Title</th>
+                <th class="progress-bar-column">Progress Bar</th>
+                <th class="progress-column">Progress</th>
+                <th class="review-column">Review</th>
             </tr>
         </thead>
         <tbody id="progress_table_body">
             <tr>
-                <td><img src="" alt=""></td>
-                <td>Book Title</td>
-                <td>
+                <td class="image-column"><img src="" alt=""></td>
+                <td class="title-column">Book Title 12</td>
+                <td class="progress-bar-column">
                     <div class="progress" role="progressbar">
-                        <div class="progress-bar" style="width: 50%"></div>
+                        <div class="progress-bar" style="width: 33%"></div>
                     </div>
                 </td>
-                <td>26/70 <span><button type="button" class="btn btn-primary"></button></span></td>
+                <td class="progress-column">33/100
+                    <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </button>
+                </td>
+                <td class="review-column">
+                    <button type="button" class="btn btn-primary">
+                        Review
+                    </button>
+                </td>
             </tr>
             <tr>
-                <td><img src="" alt=""></td>
-                <td>Book Title</td>
-                <td>
+                <td class="image-column"><img src="" alt=""></td>
+                <td class="title-column">Book Title 224</td>
+                <td class="progress-bar-column">
                     <div class="progress" role="progressbar">
-                        <div class="progress-bar" style="width: 50%"></div>
+                        <div class="progress-bar" style="width: 66%"></div>
                     </div>
                 </td>
-                <td>26/70 <span><button type="button" class="btn btn-primary"></button></span></td>
+                <td class="progress-column">66/100
+                    <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </button>
+                </td>
+                <td class="review-column">
+                    <button type="button" class="btn btn-primary">
+                        Review
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="image-column"><img src="" alt=""></td>
+                <td class="title-column">Book Title 3656</td>
+                <td class="progress-bar-column">
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar" style="width: 100%"></div>
+                    </div>
+                </td>
+                <td class="progress-column">100/100
+                    <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </button>
+                </td>
+                <td class="review-column">
+                    <button type="button" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                        Review
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>
-</div>
 
+    <div class="modal" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Review</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="form" onsubmit="return false"></form>
+                        {% csrf_token %}
+                        <input type="hidden" id="userId" name="user_id">
+                        <div class="mb-3">
+                            <label for="rating" class="col-form-label">Rating:</label>
+                            <select name="rating" id="rating">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="col-form-label">Review:</label>
+                            <input type="text" class="form-control" id="review" name="review"></input>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveButton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     // Untuk refresh progression nanti
-    //
+
     // async function getProgress() {
     //     return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json())
     // }
@@ -72,9 +201,10 @@
     // async function refreshProgress() {
     //     document.getElementById("progress_table_body").innerHTML = ""
     //     const progresses = await getProgress()
-    //     let htmlString = ``
+    //     let htmlStringRow = ``
+    //     let htmlStringModal = ``
     //     progresses.forEach((progress) => {
-    //         htmlString += `<tr>
+    //         htmlStringRow += `<tr>
     //                         <td><img src=${progress.fields.book.cover}</td>
     //                         <td>${progress.fields.book.title}</td>
     //                         <td>
@@ -82,14 +212,79 @@
     //                                 <div class="progress-bar" style="width: ${(progress.fields.progress / progress.fields.book.pages) * 100}%"></div>
     //                             </div>
     //                         </td>
-    //                         <td>${progress.fields.progress}/${progress.fields.book.pages} <span><button type="button" class="btn btn-primary"></button></span></td>`
+    //                         <td>${progress.fields.progress}/${progress.fields.book.pages}
+    //                             <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="incrementProgress(${progress.fields.pk})">
+    //                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+    //                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    //                                 </svg>
+    //                             </button>
+    //                         </td>
+    //                         <td>
+    //                             <button type="button" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#reviewModal" data-id="${progress.fields.pk}">
+    //                                 Review
+    //                             </button>
+    //                         </td>
+    //                        </tr>`
+    
+    //         htmlStringModal += ``
     //     })
     //     document.getElementById("progress_table_body").innerHTML = htmlString
     // }
 
     // refreshProgress()
-    // function incrementPage() {
-        
+
+    // document.querySelectorAll(".edit-button").forEach(button => {
+    //     button.addEventListener('click', function () {
+    //         const userId = this.getAttribute('data-id')
+    //         fetch("{% url 'main:get_reading_progress_by_id' 0 %}".replace('0', userId))
+    //             .then((res) => res.json())
+    //             .then((data) => {
+    //                 document.getElementById('personId').value = personId
+    //                 const ageSelect = document.getElementById('rating')
+    //                 ageSelect.value = data.rating
+    //                 ageSelect.querySelectorAll('option').forEach(option => {
+    //                     if (option.value == data.rating) {
+    //                         option.selected = true
+    //                     } else {
+    //                         option.selected = false
+    //                     }
+    //                 })
+    //                 document.getElementById('review').value = data.review
+    //             })
+    //     })
+    // })
+
+    // document.getElementById("saveButton").addEventListener('click', function () {
+    //     const userId = document.getElementById(userId).value
+    //     const selectedRating = document.getElementById('rating').value
+    //     const formData = new FormData(document.querySelector("#form"))
+    //     formData.append('rating', selectedRating)
+    //     fetch("{% url 'main:add_review' 0 %}".replace('0', userId), {
+    //         method: 'POST',
+    //         body: formData
+    //     }).then(refreshProgress)
+    // })
+
+    // function incrementProgress(id) {
+    //     fetch("{% url 'main:increment_progress' 0 %}".replace('0', id), {
+    //         method: "POST",
+    //     }).then(refreshProgress)
+
+    //     return false
+    // }
+
+    // function addReview(id) {
+    //     fetch("{% url 'main:add_review' 0 %}".replace('0', id), {
+    //         method: "POST",
+    //         body: new FormData(document.querySelector("#form"))
+    //     }).then(refreshProgress)
+
+    //     resetReviewModal(id)
+    //     return false
+    // }
+
+    // function resetModal(id) {
+    //     document.getElementById(""+id).reset()
     // }
 </script>
 {% endblock content %}
