@@ -241,9 +241,13 @@ def book_store(request):
     #     'books': books,  # Kirim daftar buku ke template
     # }
     return render(request, 'book_store.html')
-# @login_required(login_url='/login')
+
+@login_required(login_url='/login')
 def book_progression(request):
-    return render(request, 'book_progression.html')
+    person = Person.objects.filter(user=request.user)
+    if person.tipe == "Wizard":
+        return render(request, 'book_progression.html')
+    return HttpResponse("Wizard only!")
 
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
