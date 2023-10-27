@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Quiz Results</title>
+{% endblock meta %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f2f2f2;
+        background-image: url('https://images.alphacoders.com/132/1326370.png');
+    }
+
+    #question-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 30px auto;
+        text-align: center;
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #333333;
+    }
+
+    #quiz-form {
+        margin: 20px 0;
+    }
+
+    input[type="radio"] {
+        margin: 10px 0;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #result {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 20px;
+        color: #333333;
+    }
+
+    @media only screen and (max-width: 600px) {
+        #question-container {
+            width: 90%;
+        }
+
+        label {
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Page</title>
+</head>
+
+<body data-user-points="{{ userPoints }}">
+    <div id="question-container">
+        <h2 id="question">Book Recommendation</h2>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-sm-2 row-cols-xs-1 g-4">
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        async function getBooks() {
+            return fetch("{% url 'book:get_books' %}").then((res) => res.json());
+        }
+        async function showBooks() {
+            document.querySelector(".row").innerHTML = "";
+            const books = await getBooks();
+            const userPoints = parseInt(document.body.getAttribute('data-user-points'));
+
+            const startIdx = Math.max(userPoints - 3, 0);
+            const endIdx = userPoints;
+
+            for (let i = startIdx; i < endIdx && i < books.length; i++) {
+                const item = books[i];
+                const bookCard = `
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <div class="card" style="width: 100%;">
+                        <img src="${item.fields.image_url_l}" class="card-img-top" alt="Book Image" style="width: 100%; height: auto;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title h4 font-weight-bold">${item.fields.title}</h5>
+                            <p class="card-text italic">Author: ${item.fields.author}</p>
+                            <p class="card-text italic">Isbn: ${item.fields.isbn}</p>
+                            <p class="card-text italic">Date Published: ${item.fields.year_publication}</p>
+                            <p class="card-text italic">Publisher: ${item.fields.publisher}</p>
+                        </div>
+                    </div>
+                </div>`;
+
+                const row = document.querySelector(".row");
+                row.innerHTML += bookCard;
+            }
+        }
+
+        // Call the function to show the books when the page loads
+        showBooks();
+    </script>
+</body>
+
+</html>
+
+{% endblock content %}
