@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages  
 from django.shortcuts import redirect
@@ -25,7 +25,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from main.forms import MainThreadForm, PersonForm, ThreadForm
-from main.models import Book, MainThread, Person, ReadingProgress, Thread
+from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
 import csv
 from django.shortcuts import render
@@ -276,5 +276,27 @@ def add_review(request, id):
     
     return HttpResponseNotFound()
 
+@login_required(login_url='/login')
 def magic_quiz(request):
-    return render(request, 'magic_quiz.html')
+    user = get_object_or_404(QuizPoint, user=request.user)
+    points = {
+        'points': user.points
+    }
+    return render(request, 'magic_quiz.html', points)
+
+def quiz_points(request):
+    if request.method == 'POST':
+        total_points = request.POST.get('total_points', 0)
+        user = get_object_or_404(QuizPoint, user=request.user)
+        user.points = total_points
+        user.save()
+        return HttpResponseRedirect(reverse('main:quiz_results'))
+    
+def quiz_results(request):
+    data = Book.objects.all()
+    user = get_object_or_404(QuizPoint, user=request.user)
+    books = {
+        'booklist': data,
+        'userPoints': user.points
+    }
+    return render(request, "quiz_results.html", books)

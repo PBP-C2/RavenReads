@@ -45,3 +45,7 @@ class ReadingProgress(models.Model):
     rating = models.IntegerField()
     review = models.TextField()
     date_updated = models.DateTimeField(auto_now=True)
+
+class QuizPoint(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
