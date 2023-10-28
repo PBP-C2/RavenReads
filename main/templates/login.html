@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load widget_tweaks %}
 
 {% block meta %}
@@ -7,6 +7,12 @@
 
 {% block content %}
 <style>
+    body{
+        background-image: url("https://media4.giphy.com/media/yEXZQ5m3u3pDHZLuPi/giphy.gif?cid=ecf05e4753bxtgtpj02tvuzm5cdxcf4zk6xfgb2zv1uzuamm&ep=v1_gifs_related&rid=giphy.gif&ct=g");
+        background-size: cover; /* Menutupi seluruh area */
+        min-height: 100vh; /* Mengisi tinggi layar */
+    }
+
     .login{
         width: 50%;
         padding: 4%;
@@ -20,7 +26,7 @@
         align-items: center; /* Center content horizontally */
         text-align: center; /* Center text within the container */
         border-radius:30px;
-        background-color: 	#222f5b;
+        background-color: rgba(6, 11, 41, 0.7); 
     }
     .login-text{
         color: white;

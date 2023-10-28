@@ -177,6 +177,7 @@
         </div>
     </div>
 </body>
+
 <script>
   async function getMainThreadsWizard() {
     return fetch("{% url 'main:get_wizard_json' %}").then((res) => res.json())
