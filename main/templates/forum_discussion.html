@@ -1,4 +1,4 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -6,78 +6,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <title>Document</title>
 </head>
 
 {% block content %}
+
 <style>
-    .corner-button {
-        position: fixed;
-        bottom: 20px; /* Adjust the bottom and right values as needed */
-        right: 20px;
-        z-index: 999; /* Ensure the button appears above other content */
-    }   
-    #button_add {
-        background-color: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }   
-    #main-container{
-        padding: 10px;
-    }
-    #profile-wizard{
-        border: 2px solid rgb(43, 33, 234);
-        height: 100%;
-        width: 20%;
-    }
-    #profile{
-        border: 2px solid rgb(43, 33, 234);
-        height: 100%;
-        width: 100%;
-    }
-    #card-wizard{
-        border-radius: 30px;
-        background-color: #fb8805;
-    }
-    #card-muggle{
-      background-color: grey;
-    }
-    #image-profile{
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+  body {
+  background-color: rgb(255, 255, 255);
+  font-family: 'Poppins', sans-serif;
+  }
+
+  .corner-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+
+  #button_add {
+    background-color: #222f5b; /* Ravenclaw blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px; /* Increased border radius */
+    cursor: pointer;
+  }
+
+  #main-container {
+    padding: 10px;
+
+  }
+
+  #profile-wizard {
+    border: 0px solid #222f5b; /* Ravenclaw blue */
+    height: 100%;
+    width: 20%;
+  }
+
+  #profile {
+    border: 0px solid #222f5b; /* Ravenclaw blue */
+    height: 100%;
+    width: 100%;
+  }
+
+  #card-wizard {
+    border-radius: 60px;
+    background-color: #00529b80; 
+  }
+
+  #card-muggle {
+    background-color: rgba(255, 255, 255, 0.5); 
+    border-radius: 60px;
+  }
+
+  #image-profile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-title, .card-text {
+    color: white;
+    font-family: 'Poppins', sans-serif;
+  }
 </style>
 
 <body>
     <div class="container">
       <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(1)">
         <div class="container inside-card" style="display:flex; padding:10px">
-          <div class="container image" style="border: 2px solid blue; max-width:100px" >
-          </div>
-          <div class="card-body" style="border: 2px solid green;">
+          <div class="container image" style="border: 0px solid #222f5b; max-width:100px" ></div>
+          <div class="card-body" style="border: 0px solid;">
             <h5 class="card-title">JUDUL</h5>
             <p class="card-text"><small class="text-body-secondary">Posted at ${ thread.fields.date_created}</small></p>
           </div>
-
         </div>
       </div>
     </div>
 
-    <div class="container" id="main-thread-ajax" style="border: 2px solid red">
-
-    </div>
+    <div class="container" id="main-thread-ajax" style="border: 0px solid"></div>
 
     <div class="corner-button">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
           Make New Thread Modal
         </button>
     </div>
-
 
     <!-- Modal for Making New Thread -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
