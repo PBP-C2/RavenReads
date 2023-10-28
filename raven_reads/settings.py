@@ -41,6 +41,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 INSTALLED_APPS = [
     'main',
     'book',
+    'spell_book',
+    'whole_scroll',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

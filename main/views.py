@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages  
 from django.shortcuts import redirect
@@ -20,12 +20,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from main.forms import MainThreadForm, PersonForm, ThreadForm
-from main.models import Book, MainThread, Person, ReadingProgress, Thread
+from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
 import csv
 from django.shortcuts import render
@@ -259,8 +259,57 @@ def book_progression(request):
     return render(request, 'book_progression.html')
 
 def get_reading_progress(request):
-    progress = ReadingProgress.objects.filter(user=request.user)
+    progresses = ReadingProgress.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', progresses))
+
+def get_reading_progress_by_id(request, id):
+    progresses = ReadingProgress.objects.filter(user=request.user)
+    progress = progresses.filter(pk=id)
     return HttpResponse(serializers.serialize('json', progress))
 
+def increment_progress(request, id):
+    if request.method == 'POST':
+        progress = ReadingProgress.objects.filter(user=request.user)
+        current_progress = progress.filter(pk=id)
+        if current_progress.book.pages > current_progress.progress:
+            current_progress.progress += 1
+            current_progress.save()
+        return HttpResponse(b"OK", status=200)
+    
+    return HttpResponseNotFound()
+
+def add_review(request, id):
+    if request.method == 'POST':
+        progress = ReadingProgress.objects.filter(user=request.user)
+        current_progress = progress.filter(pk=id)
+        current_progress.rating = request.POST.get("rating")
+        current_progress.review = request.POST.get("review")
+        current_progress.save()
+        return HttpResponse(b"OK", status=200)
+    
+    return HttpResponseNotFound()
+
+@login_required(login_url='/login')
 def magic_quiz(request):
-    return render(request, 'magic_quiz.html')
+    user = get_object_or_404(QuizPoint, user=request.user)
+    points = {
+        'points': user.points
+    }
+    return render(request, 'magic_quiz.html', points)
+
+def quiz_points(request):
+    if request.method == 'POST':
+        total_points = request.POST.get('total_points', 0)
+        user = get_object_or_404(QuizPoint, user=request.user)
+        user.points = total_points
+        user.save()
+        return HttpResponseRedirect(reverse('main:quiz_results'))
+    
+def quiz_results(request):
+    data = Book.objects.all()
+    user = get_object_or_404(QuizPoint, user=request.user)
+    books = {
+        'booklist': data,
+        'userPoints': user.points
+    }
+    return render(request, "quiz_results.html", books)
