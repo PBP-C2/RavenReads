@@ -244,10 +244,10 @@ def book_store(request):
 
 @login_required(login_url='/login')
 def book_progression(request):
-    person = Person.objects.filter(user=request.user)
+    person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":
         return render(request, 'book_progression.html')
-    return HttpResponse("Wizard only!")
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
@@ -255,13 +255,13 @@ def get_reading_progress(request):
 
 def get_reading_progress_by_id(request, id):
     progresses = ReadingProgress.objects.filter(user=request.user)
-    progress = progresses.filter(pk=id)
+    progress = progresses.get(pk=id)
     return HttpResponse(serializers.serialize('json', progress))
 
 def increment_progress(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         if current_progress.book.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
@@ -272,12 +272,22 @@ def increment_progress(request, id):
 def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         current_progress.rating = request.POST.get("rating")
         current_progress.review = request.POST.get("review")
         current_progress.save()
         return HttpResponse(b"OK", status=200)
     
+    return HttpResponseNotFound()
+
+def add_progression(request, id):
+    if request.method == 'POST':
+        user = request.user
+        # book = 
+        new_progress = ReadingProgress(user=user)
+        new_progress.save()
+        return HttpResponse(b"CREATED", status=201)
+
     return HttpResponseNotFound()
 
 @login_required(login_url='/login')
