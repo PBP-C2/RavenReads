@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% block content %}
+<body>
+    <!-- <div class="container">
+        <h1> Bruh </h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Post"/>
+        </div>
+    </div> -->
+    <div class="container" id="ajax-from">
+        <form id="form" onsubmit="return false;">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="col-form-label">Title:</label>
+                <input type="text" class="form-control" id="title" name="title"></input>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">Image URL:</label>
+                <input type="text" class="form-control" id="image_url" name="image_url"></input>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">Content:</label>
+                <input type="text" class="form-control" id="content" name="content"></input>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary" id="button_add_ajax">Make New Threads</button>
+    </div>
+
+    <div class="container">
+        <div class="row"id="scroll-json">
+
+        </div>
+    </div>
+
+</body>
+<script>
+    async function getScrollJSON(){
+        return fetch("{% url 'spell_book:get_scroll_json' %}").then((res) => res.json())
+    }
+
+    async function refreshScrolls(){
+        document.getElementById("scroll-json").innerHTML = ""
+        const scrolls = await getScrollJSON()
+
+        let htmlString = ``
+
+        scrolls.forEach((scroll) => {
+            htmlString += `\n
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="${ scroll.fields.image_url }" class="card-img-top" alt="...">
+                        <div class="card-body">
+                        <h5 class="card-title">${ scroll.fields.title }</h5>
+                        </div>
+                    </div>
+                </div>
+            ` 
+        })
+        document.getElementById("scroll-json").innerHTML = htmlString
+    };
+    refreshScrolls()
+
+    function makeNewScroll() {
+        fetch("{% url 'spell_book:new_scroll_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshScrolls)
+
+        document.getElementById("form").reset()
+        
+        return false
+    }
+
+    document.getElementById("button_add_ajax").onclick = makeNewScroll
+
+</script>
+{% endblock content %}
+</html>

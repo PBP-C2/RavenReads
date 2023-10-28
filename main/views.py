@@ -95,6 +95,13 @@ def forum_discussion(request):
     muggle_thread = MainThread.objects.filter(person__in=muggle)
     thread = Thread.objects.all()
     form = MainThreadForm()
+    recently_viewed_thread = None
+    
+    if 'recently_viewed_thread' in request.session:
+        recently_viewed_thread = MainThread.objects.filter(pk__in=request.session['recently_viewed_thread'])
+    else:
+        recently_viewed_thread = None
+        
 
     if request.method == "POST":
         form = MainThreadForm(request.POST)
@@ -113,6 +120,7 @@ def forum_discussion(request):
         'form': form,
         'wizard_thread': wizard_thread,
         'muggle_thread': muggle_thread,
+        'recent': recently_viewed_thread,
     }
     return render(request, 'forum_discussion.html', context)
 
@@ -138,6 +146,19 @@ def open_main_thread(request, id):
     main_thread = MainThread.objects.get(pk=id)
     thread = Thread.objects.filter(main_thread=main_thread)
     form = ThreadForm()
+
+    # Untuk session
+    if 'recently_viewed_thread' in request.session:
+        if id in request.session['recently_viewed_thread']:
+            request.session['recently_viewed_thread'].remove(id)
+        
+        request.session['recently_viewed_thread'].insert(0, id)
+        if len(request.session['recently_viewed_thread']) > 5:
+            request.session['recently_viewed_thread'].pop()
+    else:
+        request.session['recently_viewed_thread'] = [id]
+
+    request.session.modified = True
 
     if request.method == "POST":
         form = ThreadForm(request.POST)
@@ -206,6 +227,19 @@ def new_main_thread_ajax(request):
 
         new_main_thread = MainThread(title=title, content=content, person=person, thread_count=thread_count)
         new_main_thread.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
+def new_thread_ajax(request, id):
+    if request.method == 'POST':
+        person = Person.objects.get(user=request.user)
+        main_thread = MainThread.objects.get(pk=id)
+        content = request.POST.get("content")
+
+        new_thread = Thread(content=content, person=person, main_thread=main_thread)
+        new_thread.save()
 
         return HttpResponse(b"CREATED", status=201)
 

@@ -16,6 +16,7 @@
         padding: 1%;
         border-radius: 10px;
     }
+    
     #button-reply{
         background-color: #3498db;
         color: white;
@@ -71,7 +72,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal">Make New Threads</button>
+                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal" >Make New Threads</button>
                 </div>
             </div>
         </div>
@@ -91,7 +92,7 @@
 </body>
 <script>
     async function getThreadsReply() {
-        return fetch("{% url 'main:get_wizard_json' %}").then((res) => res.json())
+        return fetch("{% url 'main:get_thread_json' 0 %}".replace("0", "{{ main_thread_id }}")).then((res) => res.json())
     }
 
     async function refreshPage() {
@@ -108,7 +109,18 @@
             document.getElementById("test-ajax").innerHTML = htmlString
     }
     refreshPage() 
-    window.addEventListener("load", refreshPage);
+
+    function makeNewThread() {
+        fetch("{% url 'main:new_thread_ajax' 0 %}".replace("0", "{{ main_thread_id }}"), {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshPage)
+
+        document.getElementById("form").reset()
+        
+        return false
+    }
+    document.getElementById("button_add_ajax").onclick = makeNewThread
 </script>
 {% endblock content %}
 </html>
