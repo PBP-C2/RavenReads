@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>About</title>
+{% endblock meta %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f2f2f2;
+        background-image: url('https://images4.alphacoders.com/118/118414.jpg');
+    }
+
+    #question-container {
+        background-color: rgba(255, 255, 255, 0.5); /* Transparent white */
+        padding: 30px;
+        border-radius: 10px;
+        margin: 100px auto;
+        width: 60%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2,h4 {
+        color: #333333;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+</head>
+
+<body>
+    <div id="question-container">
+        <h2>Ravenreads</h2>
+        <h4 style="text-align: justify">Ravenreads is a web platform that offers various services to book enthusiasts. It allows users to borrow books from a rich collection, take part in engaging quizzes to get book recommendations based, participate in lively discussions on a variety of topics, and create new threads for in-depth conversations.</h4>
+        <br>
+        <h5>Contact</h5>
+        <h5>Email    : ravenreads@gmail.com</h5>
+        <h5>Phone    : 08111111111</h5>
+        <h5>Location : University Of Indonesia</h5>
+    </div>
+</body>
+
+</html>
+
+{% endblock content %}
