@@ -1,4 +1,3 @@
-import csv
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages  
@@ -25,11 +24,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, JsonResponse)
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
+from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
+# from main.models import MainThread, Person, ReadingProgress, Thread
+from main.models import (Book, BookStore, Checkout, MainThread, Person,
+                         ReadingProgress, Thread)
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
@@ -230,6 +232,19 @@ def new_main_thread_ajax(request):
 
         new_main_thread = MainThread(title=title, content=content, person=person, thread_count=thread_count)
         new_main_thread.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
+def new_thread_ajax(request, id):
+    if request.method == 'POST':
+        person = Person.objects.get(user=request.user)
+        main_thread = MainThread.objects.get(pk=id)
+        content = request.POST.get("content")
+
+        new_thread = Thread(content=content, person=person, main_thread=main_thread)
+        new_thread.save()
 
         return HttpResponse(b"CREATED", status=201)
 
