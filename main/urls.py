@@ -1,11 +1,12 @@
 from django.urls import path
-from main.views import book_store, get_reading_progress, show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_wizard_json, new_main_thread_ajax
-from main.views import get_main_thread_muggle_json, get_thread_json
 
-from main.views import (book_progression, forum_discussion,
-                        get_reading_progress,
-                        login_user, logout_user, make_thread, open_main_thread,
-                        register, reply, show_main, magic_quiz)
+from main.views import (add_checkout_ajax, book_progression, book_store,
+                        forum_discussion, get_books_from_json,
+                        get_main_thread_muggle_json,
+                        get_main_thread_wizard_json, get_reading_progress,
+                        get_thread_json, login_user, logout_user, magic_quiz,
+                        make_thread, new_main_thread_ajax, open_main_thread,
+                        register, reply, see_checkout_ajax, show_main)
 
 app_name = 'main'
 
@@ -25,5 +26,8 @@ urlpatterns = [
     path('book-progression/', book_progression, name='book_progression'),
     path('get-progression/', get_reading_progress, name='get_reading_progress'),
     path('book_store/', book_store, name='book_store'),
-    path('magic_quiz/', magic_quiz, name='magic_quiz')
+    path('magic_quiz/', magic_quiz, name='magic_quiz'),
+    path('get_books_from_json/', get_books_from_json, name='get_books_from_json'),
+    path('see_checkout_ajax/',see_checkout_ajax,name ='see_checkout_ajax'),
+    path('add_checkout_ajax/',add_checkout_ajax,name='add_checkout_ajax'),
 ]

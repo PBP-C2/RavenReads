@@ -1,38 +1,24 @@
-import json
-from django.shortcuts import render
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
-from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+import csv
 import datetime
+import json
 
 import requests
-from main.models import BookStore, Person, MainThread, ReadingProgress, Thread
-from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.core import serializers
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-import datetime
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import (HttpResponse, HttpResponseNotFound,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
-from main.forms import MainThreadForm, PersonForm, ThreadForm
+from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
 # from main.models import MainThread, Person, ReadingProgress, Thread
-from main.models import MainThread, Person, Thread
-import csv
-from django.shortcuts import render
-from main.models import Book
+from main.models import (Book, BookStore, Checkout, MainThread, Person,
+                         ReadingProgress, Thread)
+
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -214,20 +200,25 @@ def new_main_thread_ajax(request):
 
     return HttpResponseNotFound()
 
+import json
+import os
+
+from django.conf import settings
+
+
+def get_books_from_json(request):
+    json_file_path = os.path.join(settings.BASE_DIR, 'book', 'fixtures', 'Books.json')
+    with open('book/fixtures/Books.json', 'r') as json_file:
+        data = json.load(json_file)
+    return JsonResponse(data, safe=False)
 
 def book_store(request):
-    
-    json_file_path = "book/fixtures/Books.json"  # Ganti dengan path yang sesuai
     context = {}
-
     try : 
-        with open(json_file_path, "r") as json_file:
-            json_data = json.load(json_file)
-
         # Ambil data dari model BookStore
         bookstores = BookStore.objects.all()
 
-        # Gabungkan data JSON dengan data dari model BookStore
+        # Gabungkan data dari model BookStore
         combined_data = []
         for bookstore in bookstores:
             data = {
@@ -240,16 +231,40 @@ def book_store(request):
             }
             combined_data.append(data)
 
-            # Tambahkan data JSON ke data dari model BookStore
-            combined_data.extend(json_data)
-
-            context = {
-                'books': combined_data,
-            }
+        context = {
+            'books': combined_data,
+        }
     except Exception as error:
         print("Gagal mengambil data buku:", error)
 
     return render(request, 'book_store.html', context)
+
+
+def add_checkout_ajax(request):
+    if request.method == 'POST':
+        book_id = request.POST.get("book_id")
+        book = Book.objects.get(pk=book_id)
+        user = request.user
+
+        new_checkout = Checkout(user=user, book=book)
+        new_checkout.save()
+
+        return HttpResponse("Checkout added", status=201)
+
+    return HttpResponseNotFound()
+
+def see_checkout_ajax(request):
+    if request.method == 'GET':
+        user = request.user
+        checkouts = Checkout.objects.filter(user=user)
+
+        checkout_books = [checkout.book for checkout in checkouts]
+
+        data = serializers.serialize('json', checkout_books)
+        return HttpResponse(data)
+
+    return HttpResponseNotFound()
+
 
 # @login_required(login_url='/login')
 def book_progression(request):

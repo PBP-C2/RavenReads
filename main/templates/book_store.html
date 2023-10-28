@@ -25,9 +25,16 @@
     }
     .card {
         width: calc(20% - 20px);
-        height: 300px;
+        height: 250px;
         margin: 10px;
         perspective: 1000px;
+        text-align: center;
+        margin-top: 10px;
+        border : none;
+        display: flex; /* Menjadikan card elemen berbasis flex */
+        flex-direction: column; /* Mengatur tata letak kolom */
+        align-items: center; /* Menyusun elemen secara tengah */
+        justify-content: center;
     }
     .card-inner {
         width: calc(20% - 20px);
@@ -35,6 +42,11 @@
         margin: 10px;
         transition: transform 0.5s;
         transform-style: preserve-3d;
+        border : none;
+        display: flex; /* Menjadikan card elemen berbasis flex */
+        flex-direction: column; /* Mengatur tata letak kolom */
+        align-items: center; /* Menyusun elemen secara tengah */
+        justify-content: center;
     }
     .card:hover .card-inner {
         transform: rotateY(180deg);
@@ -45,6 +57,10 @@
         height: 100%;
         position: absolute;
         backface-visibility: hidden;
+        display: flex; /* Menjadikan card elemen berbasis flex */
+        flex-direction: column; /* Mengatur tata letak kolom */
+        align-items: center; /* Menyusun elemen secara tengah */
+        justify-content: center;
     }
     .back {
         transform: rotateY(180deg);
@@ -53,8 +69,13 @@
         display: none;
         background-color: white;
     }
+
+    .front p {
+    margin-top: 5px; /* Menambahkan jarak antara judul dan ID */
+    font-size: 12px;
+    }
     .card img {
-        max-width: 100%;
+        max-width: 80%;
         max-height: 60%;
     }
     .card h2 {
@@ -72,7 +93,7 @@
         border-radius: 4px;
     }
 
-    #searchButton, #checkoutButton {
+    #searchButton, #checkoutButton, #addBookButton {
         border: none;
         border-radius: 4px;
         cursor: pointer;
@@ -122,33 +143,65 @@
 </style>
 <body>
     <div class="header">
+        <div class="modal fade" id="addModal2" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addModalLabel" style="color: black;">List of Your Checkout</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            <div class="modal-content">
+                                <div id="checkoutList" style="color: black;"></div>
+                                <div id="bookTitle"></div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addModalLabel">Add New Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form" onsubmit="return false;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="book_id" class="col-form-label form-label" style="color: black;">Enter the Book ID:</label>
+                                <input type="number" class="form-control" id="book_id" name="book_id"></input>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="search-bar button" id="button_add" data-bs-dismiss="modal">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
         <div class="title-search">
             <h1>Book Store</h1>
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search books...">
                 <button id="searchButton">Search</button>
-                <button id="checkoutButton">See The Checkout</button>
+                <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal">Add Book to Checkout</button>
+                <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2" onclick="updateCheckoutList()">See The Checkout</button>
             </div>
         </div>
     </div>
+    
     <div class="container" id="bookContainer">
         <!-- Kartu-kartu buku akan ditambahkan di sini secara dinamis -->
     </div>
 
     <script>
         // Dataset buku dalam bentuk array JavaScript
-        // const booksData = [
-        //     { title: "Judul Buku 1", description: "Deskripsi buku 1", cover: "cover1.jpg", rating: "5", price: "$10.00" },
-        //     { title: "Judul Buku 2", description: "Deskripsi buku 2", cover: "cover2.jpg", rating: "4.5", price: "$12.00" },
-        //     { title: "Judul Buku 3", description: "Deskripsi buku 3", cover: "cover3.jpg", rating: "4.8", price: "$15.00" },
-        //     { title: "Judul Buku 4", description: "Deskripsi buku 4", cover: "cover4.jpg", rating: "4.2", price: "$9.99" },
-        //     { title: "Judul Buku 5", description: "Deskripsi buku 5", cover: "cover5.jpg", rating: "4.7", price: "$14.50" },
-        //     { title: "Judul Buku 6", description: "Deskripsi buku 6", cover: "cover6.jpg", rating: "4.0", price: "$7.99" },
-        //     { title: "Judul Buku 7", description: "Deskripsi buku 7", cover: "cover7.jpg", rating: "4.5", price: "$12.50" },
-        //     { title: "Judul Buku 8", description: "Deskripsi buku 8", cover: "cover8.jpg", rating: "4.3", price: "$11.99" },
-        //     { title: "Judul Buku 9", description: "Deskripsi buku 9", cover: "cover9.jpg", rating: "4.8", price: "$15.00" },
-        //     { title: "Judul Buku 10", description: "Deskripsi buku 10", cover: "cover10.jpg", rating: "4.5", price: "$12.50" }
-        // ];
         const booksData = [];
 
         // Ambil elemen kontainer
@@ -156,11 +209,11 @@
 
         async function fetchBooks(){
             try {
-            const response = await fetch('http://localhost:8000/book_store/');
+            const response = await fetch('/get_books_from_json/');
             const data = await response.json();
             booksData.push(...data);
             // Loop melalui data buku dan buat kartu untuk setiap buku
-            for (let i = 0; i < booksData.length; i++) {
+            for (let i = 0; i < 100; i++) {
                 const book = booksData[i];
                 const card = document.createElement("div");
                 card.classList.add("card");
@@ -169,24 +222,27 @@
                 const front = document.createElement("div");
                 front.classList.add("front");
                 const cover = document.createElement("img");
-                cover.src = book.cover;
+                cover.src = book.fields.image_url_l;
                 const title_front = document.createElement("h2");
-                title_front.textContent = book.title;
+                title_front.textContent = book.fields.title;
+                const id_book = document.createElement("h2");
+                id_book.textContent = `ID : ${book.pk}`;
                 front.appendChild(cover);
                 front.appendChild(title_front);
+                front.appendChild(id_book);
                 card.appendChild(front);
 
                 // Bagian belakang kartu
                 const back = document.createElement("div");
                 back.classList.add("back");
                 const title = document.createElement("h2");
-                title.textContent = `Title: ${book.title}`;
+                title.textContent = `Title: ${book.fields.title}`;
                 const rating = document.createElement("p");
-                rating.textContent = `Rating: ${book.rating}`;
+                rating.textContent = `Rating: 4.5`;
                 const price = document.createElement("p");
-                price.textContent = `Price: ${book.price}`;
+                price.textContent = `Price: IDR 87.000,00`;
                 const description = document.createElement("p");
-                description.textContent = `Description: ${book.description}`;
+                description.textContent = `Description: The book was written by ${book.fields.author} and published by ${book.fields.publisher} in ${book.fields.year_publication} `;
                 back.appendChild(title);
                 back.appendChild(rating);
                 back.appendChild(price);
@@ -194,11 +250,11 @@
                 card.appendChild(back);
 
                 card.addEventListener("mouseenter", () => {
-                    back.style.display = "block"; // Tampilkan bagian belakang kartu
+                    card.querySelector(".card-inner").style.transform = "rotateY(180deg)";
                 });
 
                 card.addEventListener("mouseleave", () => {
-                    back.style.display = "none"; // Sembunyikan bagian belakang kartu
+                    card.querySelector(".card-inner").style.transform = "rotateY(0deg)";
                 });
 
                 bookContainer.appendChild(card);
@@ -207,7 +263,57 @@
             console.error("Gagal mengambil data buku:", error);
         }
         }
-        
+        fetchBooks();
+
+        document.getElementById("button_add").addEventListener("click", function() {
+        fetch("{% url 'main:add_checkout_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Tampilkan pesan berhasil atau error
+            if (data.success) {
+            // Jika berhasil menambahkan ke Checkout, perbarui tampilan Checkout
+            updateCheckoutList();
+        } else {
+            console.error("Gagal menambahkan ke Checkout");
+        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        document.getElementById("form").reset();
+        });
+
+        document.getElementById("checkoutButton").addEventListener("click", function() {
+        updateCheckoutList();
+        });
+        async function updateCheckoutList() {
+        fetch("{% url 'main:see_checkout_ajax' %}")
+        .then(response => response.json())
+        .then(data => {
+            // Data adalah daftar buku yang ada di Checkout
+            const checkoutList = document.getElementById("checkoutList");
+            let innerHTML = ""; // Hapus konten Checkout sebelumnya
+
+            // Loop melalui data buku di Checkout dan tambahkan judul buku ke tampilan
+            data.forEach(book => {
+                const bookData = JSON.parse(book);
+                
+                const bookId = bookData.pk; // Get the book's ID
+                const bookTitle = bookData.fields.title;
+                const bookInfo = document.createElement("p");
+                bookInfo.textContent = `ID Number: ${bookId} - Title: ${bookTitle}`;
+                checkoutList.appendChild(bookInfo);
+            });
+
+            // checkoutList.innerHTML = innerHTML;
+
+        });
+
+        }
     </script>
 </body>
 {% endblock content %}

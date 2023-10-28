@@ -1,7 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.db import models
 
 from book.models import Book
 
@@ -41,8 +41,14 @@ class BookStore(models.Model):
 
     book_reference = models.ForeignKey(Book, on_delete=models.CASCADE)
 
+class Checkout(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
 class ReadingProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    progress = models.IntegerField()
+    progress = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0)
+    review = models.TextField(default="")
     date_updated = models.DateTimeField(auto_now=True)
