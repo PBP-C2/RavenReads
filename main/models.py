@@ -41,9 +41,9 @@ class Book(models.Model):
 class ReadingProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    progress = models.IntegerField()
-    rating = models.IntegerField()
-    review = models.TextField()
+    progress = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0)
+    review = models.TextField(default="")
     date_updated = models.DateTimeField(auto_now=True)
 
 class QuizPoint(models.Model):

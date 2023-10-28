@@ -9,13 +9,31 @@
 </head>
 {% block content %}
 <body>
-    <div class="container">
+    <!-- <div class="container">
         <h1> Bruh </h1>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Post"/>
         </div>
+    </div> -->
+    <div class="container" id="ajax-from">
+        <form id="form" onsubmit="return false;">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="col-form-label">Title:</label>
+                <input type="text" class="form-control" id="title" name="title"></input>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">Image URL:</label>
+                <input type="text" class="form-control" id="image_url" name="image_url"></input>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">Content:</label>
+                <input type="text" class="form-control" id="content" name="content"></input>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary" id="button_add_ajax">Make New Threads</button>
     </div>
 
     <div class="container">
@@ -51,6 +69,19 @@
         document.getElementById("scroll-json").innerHTML = htmlString
     };
     refreshScrolls()
+
+    function makeNewScroll() {
+        fetch("{% url 'spell_book:new_scroll_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshScrolls)
+
+        document.getElementById("form").reset()
+        
+        return false
+    }
+
+    document.getElementById("button_add_ajax").onclick = makeNewScroll
 
 </script>
 {% endblock content %}

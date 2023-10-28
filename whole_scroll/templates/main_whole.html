@@ -12,8 +12,10 @@
             {% for scroll in scrolls %}
             <div class="col-sm-6 mb-3 mb-sm-0">
               <div class="card" data-toggle="modal" data-target="#modal{{ scroll.id }}" onclick="openScroll('{{ scroll.id }}')">
+                <img src="{{ scroll.image_url }}" class="card-img-top" alt="...">
                 <div class="card-body">
-                  <h5 class="card-title">{{ scroll.title }}</h5>
+                  <h5 class="card-title">Made by : {{ scroll.person.name }}</h5>
+                  <p class="card-text">{{ scroll.title }}</p>
                 </div>
               </div>
             </div>

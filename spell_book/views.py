@@ -4,7 +4,7 @@ from main.models import Person
 from spell_book.forms import CreatingScrolls
 from django.shortcuts import redirect
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 # Create your views here.
 
@@ -35,3 +35,14 @@ def whole_scroll(request):
 def get_scroll_json(request):
     scrolls = Scroll.objects.all()
     return HttpResponse(serializers.serialize('json', scrolls))
+
+def new_scroll_ajax(request):
+    if request.method == "POST":
+        person = Person.objects.get(user=request.user)
+        title = request.POST.get("title")
+        image_url = request.POST.get("image_url")
+        content = request.POST.get("content")
+        new_scroll = Scroll(title=title, image_url=image_url, content=content, person=person)
+        new_scroll.save()
+        return HttpResponse(b"CREATED", status=201)
+    return HttpResponseNotFound()

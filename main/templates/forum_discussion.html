@@ -51,9 +51,23 @@
         height: 100%;
         object-fit: cover;
     }
+    #recent-inside{
+      background-color: #451952;
+      color:white;
+      border-radius: 30px;
+      padding: 30px;
+    }
 </style>
 
 <body>
+  <div class="container" id="recent">
+    <div class="container" id="recent-inside">
+      <h4> Recently Viewed Threads </h4>
+      {% for item in recent %}
+        <a href="{% url 'main:open_main_thread' item.id %}" target="_blank">{{ item.title }}</a>
+      {% endfor %}
+    </div>
+  </div>
     <div class="container">
       <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(1)">
         <div class="container inside-card" style="display:flex; padding:10px">

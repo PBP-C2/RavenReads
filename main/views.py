@@ -95,6 +95,13 @@ def forum_discussion(request):
     muggle_thread = MainThread.objects.filter(person__in=muggle)
     thread = Thread.objects.all()
     form = MainThreadForm()
+    recently_viewed_thread = None
+    
+    if 'recently_viewed_thread' in request.session:
+        recently_viewed_thread = MainThread.objects.filter(pk__in=request.session['recently_viewed_thread'])
+    else:
+        recently_viewed_thread = None
+        
 
     if request.method == "POST":
         form = MainThreadForm(request.POST)
@@ -113,6 +120,7 @@ def forum_discussion(request):
         'form': form,
         'wizard_thread': wizard_thread,
         'muggle_thread': muggle_thread,
+        'recent': recently_viewed_thread,
     }
     return render(request, 'forum_discussion.html', context)
 
@@ -138,6 +146,19 @@ def open_main_thread(request, id):
     main_thread = MainThread.objects.get(pk=id)
     thread = Thread.objects.filter(main_thread=main_thread)
     form = ThreadForm()
+
+    # Untuk session
+    if 'recently_viewed_thread' in request.session:
+        if id in request.session['recently_viewed_thread']:
+            request.session['recently_viewed_thread'].remove(id)
+        
+        request.session['recently_viewed_thread'].insert(0, id)
+        if len(request.session['recently_viewed_thread']) > 5:
+            request.session['recently_viewed_thread'].pop()
+    else:
+        request.session['recently_viewed_thread'] = [id]
+
+    request.session.modified = True
 
     if request.method == "POST":
         form = ThreadForm(request.POST)
