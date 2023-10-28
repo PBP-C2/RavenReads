@@ -115,6 +115,7 @@ def forum_discussion(request):
 
     context = {
         'user': request.user,
+        'users': Person.objects.all(),
         'main_thread': main_thread,
         'thread': thread,
         'form': form,
@@ -244,6 +245,14 @@ def new_thread_ajax(request, id):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
+def filter_thread_by_user(request, id):
+    thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
+    return HttpResponse(serializers.serialize('json', thread))
+
+def get_person_name(request, id):
+    person = Person.objects.get(pk=id)
+    return HttpResponse(serializers.serialize('json', [person]))
 
 def import_books_from_csv(file_path):
     with open(file_path, 'r') as csv_file:

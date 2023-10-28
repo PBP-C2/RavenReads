@@ -1,6 +1,6 @@
 from django.urls import path
 from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_wizard_json, new_main_thread_ajax
-from main.views import get_main_thread_muggle_json, get_thread_json, new_thread_ajax
+from main.views import get_main_thread_muggle_json, get_thread_json, new_thread_ajax, filter_thread_by_user, get_person_name
 
 from main.views import (book_progression, book_store, forum_discussion,
                         get_reading_progress, import_books_from_csv,
@@ -35,5 +35,7 @@ urlpatterns = [
     path('magic_quiz/', magic_quiz, name='magic_quiz'),
     path('quiz_points/', quiz_points, name='quiz_points'),
     path('quiz_results/', quiz_results, name='quiz_results'),
-    path('new_thread_ajax/<int:id>', new_thread_ajax, name='new_thread_ajax')
+    path('new_thread_ajax/<int:id>', new_thread_ajax, name='new_thread_ajax'),
+    path('filter_thread_by_user/<int:id>', filter_thread_by_user, name='filter_thread_by_user'),
+    path('get_person_name/<int:id>', get_person_name, name='get_person_name')
 ]

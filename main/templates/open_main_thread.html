@@ -31,27 +31,32 @@
         padding-top: 0.5%;
         padding-bottom: 0.5%;
     }
+    .reply{
+        background-color: grey;
+    }
 </style>
 
 <body>
-    <div class="container-main">
-        <div class="container-profile">
-            <div class="row">
-                <div class="col-2">
-                    <img src="{% static 'readme/wizard_logo.jpg' %}" alt="Profile Picture" width="50px" height="50px">
-                </div>
-                <div class="col-10">
-                    <h3>{{ main_thread.person.name }}</h3>                    
+    <div class="container">
+        <div class="container-main">
+            <div class="container-profile">
+                <div class="row">
+                    <div class="col-2">
+                        <img src="{% static 'readme/wizard_logo.jpg' %}" alt="Profile Picture" width="50px" height="50px">
+                    </div>
+                    <div class="col-10">
+                        <h3>{{ main_thread.person.name }}</h3>                    
+                    </div>
                 </div>
             </div>
+            <h5>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
+            <p>{{ main_thread.content }}</p>
         </div>
-        <h5>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
-        <p>{{ main_thread.content }}</p>
-    </div>
-    <div id="container-button-reply">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Make New Thread Modal
-          </button>
+        <div id="container-button-reply">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Make New Thread Modal
+              </button>
+        </div>
     </div>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -82,31 +87,31 @@
 
       </div>
 
-        {% for reply in thread %}
-        <div class="container-main">
-                <p>{{ reply.content }}</p>
-        </div>
-        {% endfor %}
-
         
 </body>
 <script>
     async function getThreadsReply() {
         return fetch("{% url 'main:get_thread_json' 0 %}".replace("0", "{{ main_thread_id }}")).then((res) => res.json())
     }
+    async function getReplyPersonName(ID) {
+        return fetch("{% url 'main:get_person_name' 0 %}".replace("0", ID)).then((res) => res.json())
+    }
 
     async function refreshPage() {
         document.getElementById("test-ajax").innerHTML = ""
-        const replyThread = await getThreadsReply()
+        const replyThread = await getThreadsReply() 
 
-        let htmlString = ``
-
-        replyThread.forEach((thread) => {
-            htmlString += `\n
-                <p1>${thread.fields.content}</p1>\n
-                ` 
-        })  
-            document.getElementById("test-ajax").innerHTML = htmlString
+        let htmlString = await Promise.all(replyThread.map(async (thread) => {
+            const personNames = await getReplyPersonName(thread.fields.person);
+            console.log(personNames)
+            return `
+                <div class="container-main reply">
+                    <p>Posted by : ${ personNames[0].fields.name }</p>
+                    <p>Content : ${ thread.fields.content }</p>
+                </div>
+            `;
+            }));
+        document.getElementById("test-ajax").innerHTML = htmlString
     }
     refreshPage() 
 

@@ -12,6 +12,7 @@ class Person(models.Model):
     tipe = models.CharField(max_length=200)
     gender = models.CharField(max_length=200)
 
+
 class MainThread(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1) 
     title = models.CharField(max_length=200)
