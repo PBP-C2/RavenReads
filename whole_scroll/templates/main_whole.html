@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+{% block content %}
+<body>
+    <div class="container">
+        <div class="row">
+            {% for scroll in scrolls %}
+            <div class="col-sm-6 mb-3 mb-sm-0">
+              <div class="card" data-toggle="modal" data-target="#modal{{ scroll.id }}" onclick="openScroll('{{ scroll.id }}')">
+                <img src="{{ scroll.image_url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Made by : {{ scroll.person.name }}</h5>
+                  <p class="card-text">{{ scroll.title }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="modal{{ scroll.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ scroll.id }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="modalLabel{{ scroll.id }}">{{ item.title }}</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                          {{ scroll.content }}
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+            {% endfor %}
+          </div>
+    </div>
+
+</body>
+<script>
+    async function openScroll(ID){
+        var myModal = new bootstrap.Modal(document.getElementById("modal"+ID));
+        myModal.show();   
+    }
+</script>
+{% endblock content %}
+</html>

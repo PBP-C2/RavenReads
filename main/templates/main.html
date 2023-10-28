@@ -1,10 +1,128 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url(https://media0.giphy.com/media/rNxWvmpAl7vFNElrOu/giphy.gif?cid=ecf05e475lbdy84olx2rhr558575oacjkd7fn7vcjnwlnszq&ep=v1_gifs_related&rid=giphy.gif&ct=g);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
 
-{% block content %}
-<div>
-    <h1>RavenReads!</h1>
-    <h1>Belom dibuat sama sekali main pagenya xixixi</h1>
-    <h1>Nama lu Orang : {{ user }}</h1>
-    <h1>Tipe lu Orang : {{ person.tipe }}</h1>
-</div>
-{% endblock content %}
+        /* Add an overlay pseudo-element */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 2;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #FFC146;
+            font-size: 140px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 10px 20px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            z-index: 2;
+            color: #ffffff;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 20px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 2;
+            color: #ffffff;
+        }
+
+        .navbar-container ul {
+            display: flex;
+            list-style-type: none;
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .navbar-container ul li {
+            margin-right: 20px;
+        }
+
+        .navbar-container ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 24px;
+        }
+
+        .navbar-container ul li a:hover {
+            color: #FFC146;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar-container">
+        <ul>
+            <li><a href="{% url 'main:forum_discussion' %}">Discussion</a></li>
+            <li><a href="{% url 'main:book_store' %}">Book Store</a></li>
+            <li><a href="{% url 'main:show_main' %}">Spellbook</a></li>
+            <li><a href="{% url 'main:magic_quiz' %}">MagicQuiz</a></li>
+            <li><a href="{% url 'main:book_progression' %}">Book Progression</a></li>
+        </ul>
+    </div>
+
+    <div class="main-container container">
+        <h1>RavenReads</h1>
+        <h2>Step into the magical realm of RavenReads,</h2>
+        <h2>where books are not mere objects, but portals to different dimensions!</h2>
+    </div>
+</body>
+</html>

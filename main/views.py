@@ -1,4 +1,19 @@
 import csv
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages  
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+from django.urls import reverse
+from django.http import HttpResponseRedirect, HttpResponseNotFound
+import datetime
+from main.models import Person, MainThread, Thread
+from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.core import serializers
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 import json
 
@@ -10,14 +25,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, JsonResponse)
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
-# from main.models import MainThread, Person, ReadingProgress, Thread
-from main.models import (Book, BookStore, Checkout, MainThread, Person,
-                         ReadingProgress, Thread)
+from main.forms import MainThreadForm, PersonForm, ThreadForm
+from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
 # Create your views here.
 
@@ -84,6 +98,13 @@ def forum_discussion(request):
     muggle_thread = MainThread.objects.filter(person__in=muggle)
     thread = Thread.objects.all()
     form = MainThreadForm()
+    recently_viewed_thread = None
+    
+    if 'recently_viewed_thread' in request.session:
+        recently_viewed_thread = MainThread.objects.filter(pk__in=request.session['recently_viewed_thread'])
+    else:
+        recently_viewed_thread = None
+        
 
     if request.method == "POST":
         form = MainThreadForm(request.POST)
@@ -102,6 +123,7 @@ def forum_discussion(request):
         'form': form,
         'wizard_thread': wizard_thread,
         'muggle_thread': muggle_thread,
+        'recent': recently_viewed_thread,
     }
     return render(request, 'forum_discussion.html', context)
 
@@ -127,6 +149,19 @@ def open_main_thread(request, id):
     main_thread = MainThread.objects.get(pk=id)
     thread = Thread.objects.filter(main_thread=main_thread)
     form = ThreadForm()
+
+    # Untuk session
+    if 'recently_viewed_thread' in request.session:
+        if id in request.session['recently_viewed_thread']:
+            request.session['recently_viewed_thread'].remove(id)
+        
+        request.session['recently_viewed_thread'].insert(0, id)
+        if len(request.session['recently_viewed_thread']) > 5:
+            request.session['recently_viewed_thread'].pop()
+    else:
+        request.session['recently_viewed_thread'] = [id]
+
+    request.session.modified = True
 
     if request.method == "POST":
         form = ThreadForm(request.POST)
@@ -271,8 +306,57 @@ def book_progression(request):
     return render(request, 'book_progression.html')
 
 def get_reading_progress(request):
-    progress = ReadingProgress.objects.filter(user=request.user)
+    progresses = ReadingProgress.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', progresses))
+
+def get_reading_progress_by_id(request, id):
+    progresses = ReadingProgress.objects.filter(user=request.user)
+    progress = progresses.filter(pk=id)
     return HttpResponse(serializers.serialize('json', progress))
 
+def increment_progress(request, id):
+    if request.method == 'POST':
+        progress = ReadingProgress.objects.filter(user=request.user)
+        current_progress = progress.filter(pk=id)
+        if current_progress.book.pages > current_progress.progress:
+            current_progress.progress += 1
+            current_progress.save()
+        return HttpResponse(b"OK", status=200)
+    
+    return HttpResponseNotFound()
+
+def add_review(request, id):
+    if request.method == 'POST':
+        progress = ReadingProgress.objects.filter(user=request.user)
+        current_progress = progress.filter(pk=id)
+        current_progress.rating = request.POST.get("rating")
+        current_progress.review = request.POST.get("review")
+        current_progress.save()
+        return HttpResponse(b"OK", status=200)
+    
+    return HttpResponseNotFound()
+
+@login_required(login_url='/login')
 def magic_quiz(request):
-    return render(request, 'magic_quiz.html')
+    user = get_object_or_404(QuizPoint, user=request.user)
+    points = {
+        'points': user.points
+    }
+    return render(request, 'magic_quiz.html', points)
+
+def quiz_points(request):
+    if request.method == 'POST':
+        total_points = request.POST.get('total_points', 0)
+        user = get_object_or_404(QuizPoint, user=request.user)
+        user.points = total_points
+        user.save()
+        return HttpResponseRedirect(reverse('main:quiz_results'))
+    
+def quiz_results(request):
+    data = Book.objects.all()
+    user = get_object_or_404(QuizPoint, user=request.user)
+    books = {
+        'booklist': data,
+        'userPoints': user.points
+    }
+    return render(request, "quiz_results.html", books)

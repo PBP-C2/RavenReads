@@ -7,6 +7,10 @@ from main.views import (add_checkout_ajax, book_progression, book_store,
                         get_thread_json, login_user, logout_user, magic_quiz,
                         make_thread, new_main_thread_ajax, open_main_thread,
                         register, reply, see_checkout_ajax, show_main)
+from main.views import (book_progression, book_store, forum_discussion,
+                        get_reading_progress,
+                        login_user, logout_user, make_thread, open_main_thread,
+                        register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results)
 
 app_name = 'main'
 
@@ -25,9 +29,19 @@ urlpatterns = [
     path('get_thread_json/<int:id>', get_thread_json, name='get_thread_json'),
     path('book-progression/', book_progression, name='book_progression'),
     path('get-progression/', get_reading_progress, name='get_reading_progress'),
+    path('get-progression/<int:id>/', get_reading_progress_by_id, name='get_reading_progress_by_id'),
+    path('increment-progress/<int:id>/', increment_progress, name='increment_progress'),
+    path('add-review/<int:id>/', add_review, name='add_review'),
     path('book_store/', book_store, name='book_store'),
     path('magic_quiz/', magic_quiz, name='magic_quiz'),
     path('get_books_from_json/', get_books_from_json, name='get_books_from_json'),
     path('see_checkout_ajax/',see_checkout_ajax,name ='see_checkout_ajax'),
     path('add_checkout_ajax/',add_checkout_ajax,name='add_checkout_ajax'),
+    path('get-progression/<int:id>/', get_reading_progress_by_id, name='get_reading_progress_by_id'),
+    path('increment-progress/<int:id>/', increment_progress, name='increment_progress'),
+    path('add-review/<int:id>/', add_review, name='add_review'),
+    path('magic_quiz/', magic_quiz, name='magic_quiz'),
+    path('quiz_points/', quiz_points, name='quiz_points'),
+    path('quiz_results/', quiz_results, name='quiz_results'),
+    path('new_thread_ajax/<int:id>', new_thread_ajax, name='new_thread_ajax')
 ]
