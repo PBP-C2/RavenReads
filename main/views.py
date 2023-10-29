@@ -335,18 +335,26 @@ def add_progression(request, id):
 
 @login_required(login_url='/login')
 def magic_quiz(request):
-    user = get_object_or_404(QuizPoint, user=request.user)
-    points = {
-        'points': user.points
+    user = request.user
+    points = 0
+    if user.is_authenticated:
+        user_points = QuizPoint.objects.filter(user=user)
+        if user_points.exists():
+            user_data = user_points.first()
+            points = user_data.points
+    context = {
+        'points': points
     }
-    return render(request, 'magic_quiz.html', points)
+    return render(request, 'magic_quiz.html', context)
 
 def quiz_points(request):
     if request.method == 'POST':
         total_points = request.POST.get('total_points', 0)
-        user = get_object_or_404(QuizPoint, user=request.user)
-        user.points = total_points
-        user.save()
+        user = request.user
+        if user.is_authenticated:
+            quiz_point, created = QuizPoint.objects.get_or_create(user=user)
+            quiz_point.points = total_points
+            quiz_point.save()
         return HttpResponseRedirect(reverse('main:quiz_results'))
     
 def quiz_results(request):
@@ -357,3 +365,6 @@ def quiz_results(request):
         'userPoints': user.points
     }
     return render(request, "quiz_results.html", books)
+    
+def show_about(request):
+    return render(request, "about.html")
