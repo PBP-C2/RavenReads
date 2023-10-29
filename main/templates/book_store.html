@@ -23,7 +23,7 @@
         justify-content: center;
     }
     .card {
-        width: calc(23% - 20px);
+        width: calc(20% - 20px);
         height: 250px;
         margin: 10px;
         perspective: 1000px;
@@ -52,44 +52,41 @@
     font-size: 12px;
     }
     .card img {
-        max-width: 60%;
+        max-width: 80%;
         max-height: 60%;
-        object-fit: contain;
-        margin-top : 1px;
     }
     .card h2 {
-        font-size: 13px;
-        font-weight: bold;
-        margin-top: 2px; /* Atur spasi antara judul dan elemen di atasnya */
-        margin-bottom: 3px;
+        font-size: 16px;
+        margin: 10px 0;
     }
     .card p {
-        font-size: 10px;
-        margin-top: 2px; /* Atur spasi antara judul dan elemen di atasnya */
-        margin-bottom: 1px;
+        font-size: 14px;
+        margin: 5px;
     }
 
+    #searchInput {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
 
-    #checkoutButton, #addBookButton{
+    #searchButton, #checkoutButton, #addBookButton {
         border: none;
         border-radius: 4px;
         cursor: pointer;
         display: flex;
         float : right;
-        margin-top: 0;
-        margin-bottom: 0;  
+        /* margin-left : 400px; */
     }
 
     #addBookButton {
-        margin-left : 5px;
-        margin-right : 2px;
-        margin-top: 0; 
-        margin-bottom: 0; 
+        margin-left : auto;
+        margin-right : auto;
     }
 
     #checkoutButton {
-        margin-left : 2px;
-        margin-right : 5px;
+        margin-left : auto;
+        margin-right : auto;
     }
 
     .header {
@@ -171,7 +168,7 @@
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="book_id" class="col-form-label form-label" style="color: black;">Enter the Book ID:</label>
-                                <input type="number" class="form-control" id="book_id" name="book_id" min="1"></input>
+                                <input type="number" class="form-control" id="book_id" name="book_id"></input>
                             </div>
                         </form>
                     </div>
@@ -186,6 +183,12 @@
             <h1>Book Store</h1>
             <div class="search-bar">
                 <div class="row">
+                    <!-- <div class="col">
+                        <input type="text" id="searchInput" placeholder="Search books...">
+                    </div> -->
+                    <!-- <div class="col">
+                        <button id="searchButton">Search</button>
+                    </div> -->
                     <div class="col">
                     <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal" >Add Book to Checkout</button>
                     </div>
@@ -213,7 +216,7 @@
             const data = await response.json();
             booksData.push(...data);
             // Loop melalui data buku dan buat kartu untuk setiap buku
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 50; i++) {
                 const book = booksData[i];
                 const card = document.createElement("div");
                 card.classList.add("card");
@@ -225,9 +228,9 @@
                 cover.src = book.fields.image_url_m;
                 const title_front = document.createElement("h2");
                 title_front.textContent = book.fields.title;
-                const author = document.createElement("p");
+                const author = document.createElement("h2");
                 author.textContent = book.fields.author;
-                const id_book = document.createElement("p");
+                const id_book = document.createElement("h2");
                 id_book.textContent = `ID : ${book.pk}`;
                 front.appendChild(cover);
                 front.appendChild(title_front);
@@ -244,7 +247,7 @@
         fetchBooks();
 
         document.getElementById("button_add").addEventListener("click", function() {
-
+            // console.log("test");
         fetch("{% url 'main:add_checkout_ajax' %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
@@ -258,7 +261,7 @@
         });
         async function updateCheckoutList() {
         fetch("{% url 'main:see_checkout_ajax' %}")
-       
+        // console.log("test");
         .then(response => response.json())
         .then(data => {
             // Data adalah daftar buku yang ada di Checkout
@@ -266,23 +269,19 @@
             innerHTML = ""; // Hapus konten Checkout sebelumnya
             checkoutList.innerHTML=innerHTML; 
 
-            if (data.checkout_books.length !=0){
-               const head = document.createElement('p')
-                if (data.user.tipe == 'Wizard'){
-                head.textContent = 'Wizard list :'; 
-                } else {
-                    head.textContent = 'Muggle list :'
-                }
-                
-                checkoutList.appendChild(head)   
-            }
-
+            // console.log(data);
             data.checkout_books.forEach(book => {
+                // console.log(book);
             const bookId = book.id
+            console.log(bookId);
             const bookTitle = book.title
             const bookInfo = document.createElement("p")
-            bookInfo.textContent = `${bookId} - ${bookTitle}`;
-            
+            if (data.user.tipe === 'Wizard') {
+            bookInfo.style.backgroundColor = 'red'
+            } else {
+            bookInfo.style.backgroundColor = 'purple'
+            }
+            bookInfo.textContent = `ID: ${bookId} - ${bookTitle}`;
             checkoutList.appendChild(bookInfo)
 
             })
