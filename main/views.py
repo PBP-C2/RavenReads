@@ -51,7 +51,10 @@ def show_main(request):
 
 def register(request):
     form_user = UserForm()
-    form_person = PersonForm()
+    form_person_muggle = PersonForm()
+    form_person_muggle.fields['tipe'].initial = "Muggle"
+    form_person_wizard = PersonForm()
+    form_person_wizard.fields['tipe'].initial = "Wizard"
 
     if request.method == "POST":
         form_user = UserForm(request.POST)
@@ -71,7 +74,7 @@ def register(request):
             return redirect('main:login')
         else:
             messages.error(request, 'Sorry, there was an error creating your account and profile. Please try again.')
-    context = {'form':form_user, 'form_person':form_person}
+    context = {'form':form_user, 'form_person_muggle':form_person_muggle, 'form_person_wizard':form_person_wizard}
     return render(request, 'register.html', context)
 
 def login_user(request):
