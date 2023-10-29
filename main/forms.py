@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from main.models import BookStore, Checkout, Person, MainThread, Thread
+from main.models import BookStore, Checkout, Person, MainThread, Thread, QuizPoint
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -49,3 +49,12 @@ class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Checkout
         fields = '__all__'
+
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = QuizPoint
+        fields = ['points']
+        
+        widgets = {
+            'points': forms.RadioSelect(attrs={'class': 'radio-select'})
+        }
