@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from main.models import Person, MainThread, Thread
+from main.models import BookStore, Checkout, Person, MainThread, Thread
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -39,3 +39,13 @@ class UserForm(UserCreationForm):
                                                     'required': 'required'}),
             'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
+
+class BookStoreForm(forms.ModelForm):
+    class Meta:
+        model = BookStore
+        fields = ['title', 'cover', 'author', 'price', 'description']
+
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Checkout
+        fields = '__all__'

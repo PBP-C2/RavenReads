@@ -14,22 +14,29 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+import json
 
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import (HttpResponse, HttpResponseNotFound,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
+from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
+# from main.models import MainThread, Person, ReadingProgress, Thread
+from main.models import (Book, BookStore, Checkout, MainThread, Person,
+                         ReadingProgress, Thread)
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
-import csv
-from django.shortcuts import render
-from .models import Book
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_GET
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -95,6 +102,13 @@ def forum_discussion(request):
     muggle_thread = MainThread.objects.filter(person__in=muggle)
     thread = Thread.objects.all()
     form = MainThreadForm()
+    recently_viewed_thread = None
+    
+    if 'recently_viewed_thread' in request.session:
+        recently_viewed_thread = MainThread.objects.filter(pk__in=request.session['recently_viewed_thread'])
+    else:
+        recently_viewed_thread = None
+        
 
     if request.method == "POST":
         form = MainThreadForm(request.POST)
@@ -108,11 +122,13 @@ def forum_discussion(request):
 
     context = {
         'user': request.user,
+        'users': Person.objects.all(),
         'main_thread': main_thread,
         'thread': thread,
         'form': form,
         'wizard_thread': wizard_thread,
         'muggle_thread': muggle_thread,
+        'recent': recently_viewed_thread,
     }
     return render(request, 'forum_discussion.html', context)
 
@@ -138,6 +154,19 @@ def open_main_thread(request, id):
     main_thread = MainThread.objects.get(pk=id)
     thread = Thread.objects.filter(main_thread=main_thread)
     form = ThreadForm()
+
+    # Untuk session
+    if 'recently_viewed_thread' in request.session:
+        if id in request.session['recently_viewed_thread']:
+            request.session['recently_viewed_thread'].remove(id)
+        
+        request.session['recently_viewed_thread'].insert(0, id)
+        if len(request.session['recently_viewed_thread']) > 5:
+            request.session['recently_viewed_thread'].pop()
+    else:
+        request.session['recently_viewed_thread'] = [id]
+
+    request.session.modified = True
 
     if request.method == "POST":
         form = ThreadForm(request.POST)
@@ -211,39 +240,102 @@ def new_main_thread_ajax(request):
 
     return HttpResponseNotFound()
 
-def import_books_from_csv(file_path):
-    with open(file_path, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            Book.objects.create(
-                title=row['title'],
-                cover=row['cover'],
-                pages=int(row['pages']),
-                author=row['author'],
-                rating=float(row['rating']),
-                price=int(row['price']),
-                description=row['description']
-            )
+def new_thread_ajax(request, id):
+    if request.method == 'POST':
+        person = Person.objects.get(user=request.user)
+        main_thread = MainThread.objects.get(pk=id)
+        content = request.POST.get("content")
 
+        new_thread = Thread(content=content, person=person, main_thread=main_thread)
+        new_thread.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
+import json
+import os
+def filter_thread_by_user(request, id):
+    thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
+    return HttpResponse(serializers.serialize('json', thread))
+
+def get_person_name(request, id):
+    person = Person.objects.get(pk=id)
+    return HttpResponse(serializers.serialize('json', [person]))
+
+
+from django.conf import settings
+
+
+def get_books_from_json(request):
+    json_file_path = os.path.join(settings.BASE_DIR, 'book', 'fixtures', 'Books.json')
+    with open('book/fixtures/Books.json', 'r') as json_file:
+        data = json.load(json_file)
+    return JsonResponse(data, safe=False)
+
+@login_required(login_url='/login')
 def book_store(request):
-    # Panggil fungsi import_books_from_csv dengan menyediakan path ke file CSV dataset
-    file_path = 'D:\My Documents\College Task 3\PBP\tugas_kelompok\books.csv'  
-    import_books_from_csv(file_path)
-    # Query untuk mengambil semua objek Book dari basis data
-    books = Book.objects.all()
+    context = {}
+    try : 
+        # Ambil data dari model BookStore
+        bookstores = BookStore.objects.all()
 
-    context = {
-        'books': books,  # Kirim daftar buku ke template
-    }
+        # Gabungkan data dari model BookStore
+        combined_data = []
+        for bookstore in bookstores:
+            data = {
+                "title": bookstore.title,
+                "cover": bookstore.cover.url,
+                "author": bookstore.author,
+                "rating": float(bookstore.rating),
+                "price": int(bookstore.price),
+                "description": bookstore.description
+            }
+            combined_data.append(data)
+
+        context = {
+            'books': combined_data,
+        }
+    except Exception as error:
+        print("Gagal mengambil data buku:", error)
+
     return render(request, 'book_store.html', context)
 
-    # context = {
-    #     'books': books,  # Kirim daftar buku ke template
-    # }
-    return render(request, 'book_store.html')
+
+def add_checkout_ajax(request):
+    if request.method == 'POST':
+        book_id = request.POST.get("book_id")
+        book = Book.objects.get(pk=book_id)
+        user = request.user
+
+        new_checkout = Checkout(user=user, book=book)
+        new_checkout.save()
+
+        return HttpResponse("Checkout added", status=201)
+
+    return HttpResponseNotFound()
+
+
+@require_GET
+def see_checkout_ajax(request):
+    user = Person.objects.filter(user =request.user).values().first()
+    # person = Person.objects.filter(user=user)
+    checkouts = Checkout.objects.select_related().filter(user=user['id']).values('book','book__title')
+
+    checkout_books = [{'id': checkout['book'], 'title': checkout['book__title']} for checkout in checkouts]
+
+    # data = serializers.serialize('json', {'checkout_books': checkout_books, 'user': user})
+    return JsonResponse({'checkout_books': checkout_books, 'user': user})
+
+   
+
+
 # @login_required(login_url='/login')
 def book_progression(request):
-    return render(request, 'book_progression.html')
+    person = Person.objects.get(user=request.user)
+    if person.tipe == "Wizard":
+        return render(request, 'book_progression.html')
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
@@ -251,13 +343,13 @@ def get_reading_progress(request):
 
 def get_reading_progress_by_id(request, id):
     progresses = ReadingProgress.objects.filter(user=request.user)
-    progress = progresses.filter(pk=id)
+    progress = progresses.get(pk=id)
     return HttpResponse(serializers.serialize('json', progress))
 
 def increment_progress(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         if current_progress.book.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
@@ -268,7 +360,7 @@ def increment_progress(request, id):
 def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         current_progress.rating = request.POST.get("rating")
         current_progress.review = request.POST.get("review")
         current_progress.save()
@@ -276,20 +368,38 @@ def add_review(request, id):
     
     return HttpResponseNotFound()
 
+def add_progression(request, id):
+    if request.method == 'POST':
+        user = request.user
+        # book = 
+        new_progress = ReadingProgress(user=user)
+        new_progress.save()
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
 @login_required(login_url='/login')
 def magic_quiz(request):
-    user = get_object_or_404(QuizPoint, user=request.user)
-    points = {
-        'points': user.points
+    user = request.user
+    points = 0
+    if user.is_authenticated:
+        user_points = QuizPoint.objects.filter(user=user)
+        if user_points.exists():
+            user_data = user_points.first()
+            points = user_data.points
+    context = {
+        'points': points
     }
-    return render(request, 'magic_quiz.html', points)
+    return render(request, 'magic_quiz.html', context)
 
 def quiz_points(request):
     if request.method == 'POST':
         total_points = request.POST.get('total_points', 0)
-        user = get_object_or_404(QuizPoint, user=request.user)
-        user.points = total_points
-        user.save()
+        user = request.user
+        if user.is_authenticated:
+            quiz_point, created = QuizPoint.objects.get_or_create(user=user)
+            quiz_point.points = total_points
+            quiz_point.save()
         return HttpResponseRedirect(reverse('main:quiz_results'))
     
 def quiz_results(request):
@@ -300,3 +410,6 @@ def quiz_results(request):
         'userPoints': user.points
     }
     return render(request, "quiz_results.html", books)
+    
+def show_about(request):
+    return render(request, "about.html")
