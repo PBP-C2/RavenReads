@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from book.models import Book as Bk
 
 # Create your models here.
 
@@ -41,11 +42,13 @@ class Book(models.Model):
 
 class ReadingProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Bk, on_delete=models.CASCADE)
+    title = models.CharField(max_length=256, default="")
+    image = models.CharField(max_length=256, default="")
+    pages = models.IntegerField(default=0)
     progress = models.IntegerField(default=0)
     rating = models.IntegerField(default=0)
-    review = models.TextField(default="s")
-    date_updated = models.DateTimeField(auto_now=True)
+    review = models.TextField(default="")
 
 class QuizPoint(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

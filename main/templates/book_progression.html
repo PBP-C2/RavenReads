@@ -9,7 +9,6 @@
     .book-progress {
         background-color: #aaaaaa;
         color: white;
-        /* border: 1px solid darkorchid; */
         border-radius: 10px;
         padding: 10px;
         font-family: 'Roboto', sans-serif;
@@ -28,24 +27,14 @@
         overflow: hidden;
     }
 
-    /* .progress-table th {
-        background-color: #dddddd;
-    } */
-    
-    /* .table-striped>tbody>tr:nth-child(odd)>td {
-    background-color: #eeeeee;
-    } */
-
     .image-column {
         width: 20%;
         vertical-align: middle;
-        /* border: 1px solid red; */
     }
     
     .title-column {
         width: 20%;
         vertical-align: middle;
-        /* border: 1px solid blue; */
     }
     
     td.title-column {
@@ -53,22 +42,23 @@
         vertical-align: middle; 
     }
 
+    td {
+        vertical-align: middle;
+    }
+
     .progress-bar-column {
         width: 30%;
         vertical-align: middle;
-        /* border: 1px solid green; */
     }
     
     .progress-column {
         width: 15%;
         vertical-align: middle;
-        /* border: 1px solid brown; */
     }
 
     .review-column {
         width: 15%;
         vertical-align: middle;
-        /* border: 1px solid darkgoldenrod; */
     }
 
     #reviewModal, #newBookModal {
@@ -80,15 +70,9 @@
         text-align: left;
     }
 
-    /* .table-responsive {
-        border: 1px solid blue;
-    } */
     
     h3 {
         width: 100%;
-        /* background-color: #cccccc;
-        border-radius: 10px; */
-        /* border: 1px solid darkolivegreen; */
         padding: 7px;
         margin: 0px;
         text-align: left;
@@ -105,7 +89,6 @@
     .col-md-6 {
         display: flex;
         align-items: center;
-        /* border: 1px solid darkkhaki; */
     }
     
     .book-progress-title {
@@ -176,7 +159,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="reviewCloseButton">Close</button>
+                    <button type="button" class="btn btn-secondary" id="editReviewButton">Edit</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="reviewSaveButton">Save changes</button>
                 </div>
             </div>
@@ -212,10 +196,6 @@
         return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json());
     }
 
-    async function getBooks() {
-        return fetch("{% url 'book:get_books' %}").then((res) => res.json());
-    }
-
     async function refreshProgress(filterValue = '') {
         document.getElementById("progressTableBody").innerHTML = "";
         const progresses = await getProgress();
@@ -225,28 +205,28 @@
             htmlString += `<tr>
                                 <td class="progress-column" colspan="5">You haven't made any reading progress</td>
                             </tr>`;
+            document.getElementById("progressTableBody").innerHTML = htmlString;
         } else {
             progresses.forEach((progress) => {
-                if (filterValue === '' || progress.fields.book.title.toLowerCase().includes(filterValue.toLowerCase())) {
-                    let randomPage = Math.floor(Math.random() * 900) + 100;
+                if (filterValue === '' || progress.fields.title.toLowerCase().includes(filterValue.toLowerCase())) {
                     matchingBookFound = true;
                     htmlString += `<tr>
-                                    <td><img src=${progress.fields.book.fields.image_url_s}</td>
-                                    <td>${progress.fields.book.fields.title}</td>
+                                    <td><img src="${progress.fields.image}"></td>
+                                    <td>${progress.fields.title}</td>
                                     <td>
                                         <div class="progress" role="progressbar">
-                                            <div class="progress-bar" style="width: ${(progress.fields.progress / randomPage) * 100}%"></div>
+                                            <div class="progress-bar" style="width: ${(progress.fields.progress / progress.fields.pages) * 100}%"></div>
                                         </div>
                                     </td>
-                                    <td>${progress.fields.progress}/${randomPage}
-                                        <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="incrementProgress(${progress.fields.pk})">
+                                    <td>${progress.fields.progress}/${progress.fields.pages}
+                                        <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="incrementProgress(${progress.pk})">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                                             </svg>
                                         </button>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#reviewModal" data-id="${progress.fields.pk}">
+                                        <button type="button" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#reviewModal" data-id="${progress.pk}">
                                             Review
                                         </button>
                                     </td>
@@ -254,12 +234,15 @@
                 }
             });
             if (matchingBookFound) {
+                document.getElementById("progressTableBody").innerHTML = htmlString;
+            } else {
                 htmlString += `<tr>
-                                <td class="title-column" colspan="5">No matching book</td>
+                                <td class="progress-column" colspan="5">No matching book</td>
                             </tr>`;
+                document.getElementById("progressTableBody").innerHTML = htmlString;
             }
         }
-        document.getElementById("progressTableBody").innerHTML = htmlString;
+        reviewButtonHandler();
     }
 
     refreshProgress();
@@ -269,68 +252,77 @@
         refreshProgress(filterValue);
     });
 
-    document.querySelectorAll(".edit-button").forEach(button => {
-        button.addEventListener('click', function () {
-            const userId = this.getAttribute('data-id')
-            fetch("{% url 'main:get_reading_progress_by_id' 0 %}".replace('0', userId))
-                .then((res) => res.json())
-                .then((data) => {
-                    document.getElementById('userId').value = userId;
-                    const ageSelect = document.getElementById('rating');
-                    ageSelect.value = data.rating;
-                    ageSelect.querySelectorAll('option').forEach(option => {
-                        if (option.value == data.rating) {
-                            option.selected = true
-                        } else {
-                            option.selected = false
-                        }
-                    })
-                    document.getElementById('review').value = data.review;
-                });
+    async function reviewButtonHandler() {
+        document.querySelectorAll(".edit-button").forEach(button => {
+            button.addEventListener('click', async function () {
+                CheckEditability();
+                const progressId = button.getAttribute('data-id')
+                document.getElementById("reviewSaveButton").setAttribute('data-id', progressId)
+                await fetch("{% url 'main:get_reading_progress_by_id' 0 %}".replace('0', progressId), {
+                    method: 'GET'
+                }).then((res) => res.json())
+                .then(data => {
+                    data = JSON.parse(data);
+                    document.getElementById("rating").value = data[0].fields.rating;
+                    document.getElementById('review').value = data[0].fields.review;
+                })
+            })
         })
-    });
+    }
 
-    document.getElementById("reviewSaveButton").addEventListener('click', function () {
-        const userId = document.getElementById('userId').value;
+    document.getElementById("reviewSaveButton").addEventListener('click', async function () {
+        const progressId = this.getAttribute('data-id');
         const selectedRating = document.getElementById('rating').value;
         const formData = new FormData(document.querySelector("#reviewForm"));
         formData.append('rating', selectedRating);
-        fetch("{% url 'main:add_review' 0 %}".replace('0', userId), {
+        await fetch("{% url 'main:add_review' 0 %}".replace('0', progressId), {
             method: 'POST',
             body: formData
-        }).then(refreshProgress);
+        });
+
+        refreshProgress();
     });
 
-    // async function addNewBook() {
-    //     const books = await getBooks()
-    //     const booksPk = document.
-    //     for (let i = 0; i < books.length; i++) {
-    //         const book = books[i]
-    //     }
-    // }
-
-    document.getElementById("newBookSaveButton").addEventListener('click', function () {
-        fetch("{% url 'main:add_progression' %}", {
+    document.getElementById("newBookSaveButton").addEventListener('click', async function () {
+        await fetch("{% url 'main:add_progression' %}", {
             method: 'POST',
             body: new FormData(document.querySelector("#newBookForm"))
-        }).then(refreshProgress);
+        });
 
-        resetModal();
+        resetBookModal();
+        refreshProgress();
     })
 
     
-    function incrementProgress(id) {
-        fetch("{% url 'main:increment_progress' 0 %}".replace('0', id), {
+    async function incrementProgress(id) {
+        await fetch("{% url 'main:increment_progress' 0 %}".replace('0', id), {
             method: "POST",
-        }).then(refreshProgress);
-        
+        });
+
+        refreshProgress();
         return false;
     }
 
-    function resetModal() {
+    function resetBookModal() {
         document.getElementById("newBookForm").reset();
     }
+    
+    function toggleEditability() {
+        const select = document.getElementById('rating');
+        const input = document.getElementById('review');
+        
+        select.disabled = !select.disabled;
+        input.disabled = !input.disabled;
+    }
+    
+    function CheckEditability() {
+        const select = document.getElementById('rating');
+        if(!select.disabled) {
+            toggleEditability();
+        }
+    }
 
-    document.getElementById("newBookCloseButton").onclick = resetModal;
+    document.getElementById("newBookCloseButton").onclick = resetBookModal;
+    document.getElementById("editReviewButton").onclick = toggleEditability;
 </script>
 {% endblock content %}
