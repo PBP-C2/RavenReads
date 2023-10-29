@@ -5,7 +5,7 @@ from main.views import (add_checkout_ajax, book_progression, book_store,
                         get_main_thread_muggle_json,
                         get_main_thread_wizard_json, get_reading_progress,
                         get_thread_json, login_user, logout_user, magic_quiz,
-                        make_thread, new_main_thread_ajax, open_main_thread,
+                        make_thread, new_main_thread_ajax, new_thread_ajax, open_main_thread,
                         register, reply, see_checkout_ajax, show_main)
 from main.views import (book_progression, book_store, forum_discussion,
                         get_reading_progress,

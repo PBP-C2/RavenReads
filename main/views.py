@@ -35,6 +35,8 @@ from main.models import (Book, BookStore, Checkout, MainThread, Person,
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_GET
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -262,6 +264,7 @@ def get_books_from_json(request):
         data = json.load(json_file)
     return JsonResponse(data, safe=False)
 
+@login_required(login_url='/login')
 def book_store(request):
     context = {}
     try : 
@@ -303,17 +306,19 @@ def add_checkout_ajax(request):
 
     return HttpResponseNotFound()
 
+
+@require_GET
 def see_checkout_ajax(request):
-    if request.method == 'GET':
-        user = request.user
-        checkouts = Checkout.objects.filter(user=user)
+    user = Person.objects.filter(user =request.user).values().first()
+    # person = Person.objects.filter(user=user)
+    checkouts = Checkout.objects.select_related().filter(user=user['id']).values('book','book__title')
 
-        checkout_books = [checkout.book for checkout in checkouts]
+    checkout_books = [{'id': checkout['book'], 'title': checkout['book__title']} for checkout in checkouts]
 
-        data = serializers.serialize('json', checkout_books)
-        return HttpResponse(data)
+    # data = serializers.serialize('json', {'checkout_books': checkout_books, 'user': user})
+    return JsonResponse({'checkout_books': checkout_books, 'user': user})
 
-    return HttpResponseNotFound()
+   
 
 
 # @login_required(login_url='/login')

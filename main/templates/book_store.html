@@ -11,7 +11,6 @@
     {% block content %}
 <style>
     body {
-        /* font-family: Arial, sans-serif; */
         background-color: #f0f0f0;
     }
     .header {
@@ -36,23 +35,8 @@
         align-items: center; /* Menyusun elemen secara tengah */
         justify-content: center;
     }
-    .card-inner {
-        width: calc(20% - 20px);
-        height: 300px;
-        margin: 10px;
-        transition: transform 0.5s;
-        transform-style: preserve-3d;
-        border : none;
-        display: flex; /* Menjadikan card elemen berbasis flex */
-        flex-direction: column; /* Mengatur tata letak kolom */
-        align-items: center; /* Menyusun elemen secara tengah */
-        justify-content: center;
-    }
-    .card:hover .card-inner {
-        transform: rotateY(180deg);
-    }
-    .front,
-    .back {
+    
+    .front{
         width: 100%;
         height: 100%;
         position: absolute;
@@ -61,13 +45,6 @@
         flex-direction: column; /* Mengatur tata letak kolom */
         align-items: center; /* Menyusun elemen secara tengah */
         justify-content: center;
-    }
-    .back {
-        transform: rotateY(180deg);
-        text-align: left;
-        padding: 10px;
-        display: none;
-        background-color: white;
     }
 
     .front p {
@@ -97,16 +74,31 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        display: flex;
+        float : right;
+        /* margin-left : 400px; */
+    }
+
+    #addBookButton {
+        margin-left : auto;
+        margin-right : auto;
+    }
+
+    #checkoutButton {
+        margin-left : auto;
+        margin-right : auto;
     }
 
     .header {
-        display: grid;
+
         grid-template-columns: auto 1fr;
         justify-content: space-between;
         align-items: center;
         padding: 30px;
         background-color: black;
         color: white;
+        display: flex;
+
     }
 
     .title {
@@ -128,11 +120,13 @@
     }
 
     .search-bar input[type="text"] {
+        display: flex;
         width: 400px; 
         padding: 30px;
     }
 
     .search-bar button {
+        display: flex;
         padding: 5px 10px;
         background-color: white;
         color: black;
@@ -188,16 +182,25 @@
         <div class="title-search">
             <h1>Book Store</h1>
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search books...">
-                <button id="searchButton">Search</button>
-                <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal">Add Book to Checkout</button>
-                <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2" onclick="updateCheckoutList()">See The Checkout</button>
+                <div class="row">
+                    <!-- <div class="col">
+                        <input type="text" id="searchInput" placeholder="Search books...">
+                    </div> -->
+                    <!-- <div class="col">
+                        <button id="searchButton">Search</button>
+                    </div> -->
+                    <div class="col">
+                    <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal" >Add Book to Checkout</button>
+                    </div>
+                    <div class="col">
+                    <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2">See The Checkout</button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-    
     <div class="container" id="bookContainer">
-        <!-- Kartu-kartu buku akan ditambahkan di sini secara dinamis -->
     </div>
 
     <script>
@@ -213,7 +216,7 @@
             const data = await response.json();
             booksData.push(...data);
             // Loop melalui data buku dan buat kartu untuk setiap buku
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 50; i++) {
                 const book = booksData[i];
                 const card = document.createElement("div");
                 card.classList.add("card");
@@ -222,68 +225,34 @@
                 const front = document.createElement("div");
                 front.classList.add("front");
                 const cover = document.createElement("img");
-                cover.src = book.fields.image_url_l;
+                cover.src = book.fields.image_url_m;
                 const title_front = document.createElement("h2");
                 title_front.textContent = book.fields.title;
+                const author = document.createElement("h2");
+                author.textContent = book.fields.author;
                 const id_book = document.createElement("h2");
                 id_book.textContent = `ID : ${book.pk}`;
                 front.appendChild(cover);
                 front.appendChild(title_front);
+                front.appendChild(author);
                 front.appendChild(id_book);
                 card.appendChild(front);
-
-                // Bagian belakang kartu
-                const back = document.createElement("div");
-                back.classList.add("back");
-                const title = document.createElement("h2");
-                title.textContent = `Title: ${book.fields.title}`;
-                const rating = document.createElement("p");
-                rating.textContent = `Rating: 4.5`;
-                const price = document.createElement("p");
-                price.textContent = `Price: IDR 87.000,00`;
-                const description = document.createElement("p");
-                description.textContent = `Description: The book was written by ${book.fields.author} and published by ${book.fields.publisher} in ${book.fields.year_publication} `;
-                back.appendChild(title);
-                back.appendChild(rating);
-                back.appendChild(price);
-                back.appendChild(description);
-                card.appendChild(back);
-
-                card.addEventListener("mouseenter", () => {
-                    card.querySelector(".card-inner").style.transform = "rotateY(180deg)";
-                });
-
-                card.addEventListener("mouseleave", () => {
-                    card.querySelector(".card-inner").style.transform = "rotateY(0deg)";
-                });
 
                 bookContainer.appendChild(card);
                 }; 
             }catch (error) {
-            console.error("Gagal mengambil data buku:", error);
+            console.error("Faild to get the books:", error);
         }
         }
         fetchBooks();
 
         document.getElementById("button_add").addEventListener("click", function() {
+            // console.log("test");
         fetch("{% url 'main:add_checkout_ajax' %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
         })
-        .then(response => response.json())
-        .then(data => {
-            // Tampilkan pesan berhasil atau error
-            if (data.success) {
-            // Jika berhasil menambahkan ke Checkout, perbarui tampilan Checkout
-            updateCheckoutList();
-        } else {
-            console.error("Gagal menambahkan ke Checkout");
-        }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
+       
         document.getElementById("form").reset();
         });
 
@@ -292,26 +261,33 @@
         });
         async function updateCheckoutList() {
         fetch("{% url 'main:see_checkout_ajax' %}")
+        // console.log("test");
         .then(response => response.json())
         .then(data => {
             // Data adalah daftar buku yang ada di Checkout
             const checkoutList = document.getElementById("checkoutList");
-            let innerHTML = ""; // Hapus konten Checkout sebelumnya
+            innerHTML = ""; // Hapus konten Checkout sebelumnya
+            checkoutList.innerHTML=innerHTML; 
 
-            // Loop melalui data buku di Checkout dan tambahkan judul buku ke tampilan
-            data.forEach(book => {
-                const bookData = JSON.parse(book);
-                
-                const bookId = bookData.pk; // Get the book's ID
-                const bookTitle = bookData.fields.title;
-                const bookInfo = document.createElement("p");
-                bookInfo.textContent = `ID Number: ${bookId} - Title: ${bookTitle}`;
-                checkoutList.appendChild(bookInfo);
-            });
+            // console.log(data);
+            data.checkout_books.forEach(book => {
+                // console.log(book);
+            const bookId = book.id
+            console.log(bookId);
+            const bookTitle = book.title
+            const bookInfo = document.createElement("p")
+            if (data.user.tipe === 'Wizard') {
+            bookInfo.style.backgroundColor = 'red'
+            } else {
+            bookInfo.style.backgroundColor = 'purple'
+            }
+            bookInfo.textContent = `ID: ${bookId} - ${bookTitle}`;
+            checkoutList.appendChild(bookInfo)
 
-            // checkoutList.innerHTML = innerHTML;
+            })
 
         });
+         
 
         }
     </script>
