@@ -21,7 +21,7 @@
   }
 
   #body{
-    background-color: #060B29; /* Membuat background berwarna merah */
+    background-color: #00025f; /* Membuat background berwarna merah */
     border-radius: 50px;
     padding: 20px; /* Menambahkan padding untuk menciptakan ruang di sekeliling card */
     
@@ -50,12 +50,6 @@
   .main-thread-ajax{
     background-color: (255, 255, 255, 0.5);
   }
-  .corner-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-  }
   
   #user-filter{
     border-radius: 50px;
@@ -64,15 +58,6 @@
     margin-bottom: 30px;
     margin-left: 27px;
   }
-  #button_add {
-    background-color: #222f5b;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-  }
-
   #main-container {
     padding: 10px;
   }
@@ -91,7 +76,7 @@
 
   #card-wizard {
     border-radius: 50px;
-    background-color: #0F1837;
+    background-color: #13157b;
     width: 1000px;
     margin-bottom: 5px;
     margin-left: 100px;
@@ -99,7 +84,7 @@
 
   #card-muggle {
     border-radius: 50px;
-    background-color: #0F1837;
+    background-color: #13157b;
     width: 1000px;
     margin-bottom: 5px;
     margin-left: 100px;
@@ -156,6 +141,33 @@
     margin-top:30px;
   }
 
+  .corner-button{
+    
+        border: none;
+        transition: all 0.2s;
+        margin-top: 20px;
+        margin-bottom: 50px;
+        font-size: 15px;
+        padding: 10px 30px; /* Penyesuaian ukuran tombol */
+        border-radius: 50px;
+        height: 70px;
+        text-align: center;
+        justify-content: center;
+        font-size:40px;
+        font-weight: bold;
+        transition: transform 0.3s;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+    }
+
+    .corner-button:hover{
+        transform: scale(1.1); /* Memperbesar ukuran tombol saat kursor diarahkan */
+    }
+    
+  
+
   
 </style>
 
@@ -195,7 +207,7 @@
 
   <div class="corner-button">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Make New Thread Modal
+      Add New Topic
     </button>
   </div>
 
@@ -220,9 +232,9 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" id="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal">Make New Threads</button>
+                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal">Add New Topic</button>
                 </div>
             </div>
         </div>
