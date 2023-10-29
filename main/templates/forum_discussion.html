@@ -24,9 +24,6 @@
     background-color: #060B29; /* Membuat background berwarna merah */
     border-radius: 50px;
     padding: 20px; /* Menambahkan padding untuk menciptakan ruang di sekeliling card */
-    margin-top: 20px; 
-    margin-right: 300px;
-    margin-left: 300px;
     
   }
   .main-container{
@@ -164,31 +161,33 @@
 
 
 <body>
-  <div class="main-container">
-    <h1>Discussion Forum</h1>
-  </div>
-
-  <div class="body" id="body">
-    <div class="container" id="recent">
-      <div class="container" id="recent-inside">
-        <h4> Recently Viewed Threads </h4>
-        {% for item in recent %}
-        <a href="{% url 'main:open_main_thread' item.id %}" target="_blank">{{ item.title }}</a><br>
-        {% endfor %}
+  <div class="container body" id="body">
+    <div class="main-container">
+      <h1>Discussion Forum</h1>
+    </div>
+  
+    <div class="body" >
+      <div class="container" id="recent">
+        <div class="container" id="recent-inside">
+          <h4> Recently Viewed Threads </h4>
+          {% for item in recent %}
+          <a href="{% url 'main:open_main_thread' item.id %}" target="_blank">{{ item.title }}</a><br>
+          {% endfor %}
+        </div>
       </div>
+  
+      <div class="container">
+        <select class="form-select" id="user-filter">
+          <option value="">Select User</option>
+          {% for user in users %}
+          <option value="{{ user.id }}">{{ user.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  
     </div>
-
-    <div class="container">
-      <select class="form-select" id="user-filter">
-        <option value="">Select User</option>
-        {% for user in users %}
-        <option value="{{ user.id }}">{{ user.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
     <div class="container" id="main-thread-ajax">
-
+  
     </div>
   </div>
 

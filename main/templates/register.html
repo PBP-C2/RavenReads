@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load widget_tweaks %}
 
 {% block meta %}
     <title>Register</title>
@@ -89,6 +88,10 @@
         margin-top: 1%;
         margin-bottom: 1%;
     }
+    .form-control{
+        margin-top: 1%;
+        margin-bottom: 1%;
+    }
 
     h1{
         text-align: center;
@@ -144,37 +147,16 @@
                     <form method="POST" >  
                         {% csrf_token %}  
                         <table>  
-                    
-                            <div class="form-group">
-                               {% render_field form.username type="text" class="form-control" id="exampleInputUsername" placeholder="Username" %}
-                            </div>
-
-                            <div class="form-group">
-                               {% render_field form.password1 type="password" class="form-control" id="exampleInputPassword" placeholder="Password" %}
-                            </div>  
-                            <div class="form-group">
-                                {% render_field form.password2 type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirm Password" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.name type="name" class="form-control" id="exampleInputPassword1" placeholder="Input Name" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.email type="email" class="form-control" id="exampleInputPassword1" placeholder="Input Email" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.tipe type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" Value="Wizard" %}
-                            </div>
-
-                            <div class="form-select">
-                                {% render_field form_person.gender type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" %}
-                            </div>
-                            
+                            {{ form.username }}
+                            {{ form.password1 }}
+                            {{ form.password2 }}
+                            {{ form_person_wizard.name }}
+                            {{ form_person_wizard.email }}
+                            {{ form_person_wizard.tipe }}
+                            {{ form_person_wizard.gender }}
                             <tr>  
                                 <td></td>
-                                <td><input type="submit" name="submit" value="Daftar"/></td>  
+                                <td><input class="btn btn-primary" type="submit" name="submit" value="Daftar"/></td>  
                             </tr>   
                         </table>    
                     </form>
@@ -205,35 +187,17 @@
                         <table>  
                     
                             <div class="form-group">
-                               {% render_field form.username type="text" class="form-control" id="exampleInputUsername" placeholder="Username" %}
+                                {{ form.username }}
+                                {{ form.password1 }}
+                                {{ form.password2 }}
+                                {{ form_person_muggle.name }}
+                                {{ form_person_muggle.email }}
+                                {{ form_person_muggle.tipe }}
+                                {{ form_person_muggle.gender }}
                             </div>
-
-                            <div class="form-group">
-                               {% render_field form.password1 type="password" class="form-control" id="exampleInputPassword" placeholder="Password" %}
-                            </div>  
-                            <div class="form-group">
-                                {% render_field form.password2 type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirm Password" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.name type="name" class="form-control" id="exampleInputPassword1" placeholder="Input Name" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.email type="email" class="form-control" id="exampleInputPassword1" placeholder="Input Email" %}
-                            </div>
-
-                            <div class="form-group">
-                                {% render_field form_person.tipe type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" value="Muggle" readonly="readonly"%}
-                            </div>
-
-                            <div class="form-select">
-                                {% render_field form_person.gender type="tipe" class="form-control" id="exampleInputPassword1" placeholder="Input Tipe" %}
-                            </div>
-                            
                             <tr>  
                                 <td></td>
-                                <td><input type="submit" name="submit" value="Daftar"/></td>  
+                                <td><input class="btn btn-primary" type="submit" name="submit" value="Daftar"/></td>  
                             </tr>   
                         </table>    
                     </form>
