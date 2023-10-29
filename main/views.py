@@ -11,9 +11,10 @@ from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+import random
 import json
 
 import requests
@@ -35,6 +36,11 @@ from main.models import (Book, BookStore, Checkout, MainThread, Person,
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
+from book.models import Book as Bk
+
+import csv
+from django.shortcuts import render
+from .models import Book
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET
 # Create your views here.
@@ -51,7 +57,10 @@ def show_main(request):
 
 def register(request):
     form_user = UserForm()
-    form_person = PersonForm()
+    form_person_muggle = PersonForm()
+    form_person_muggle.fields['tipe'].initial = "Muggle"
+    form_person_wizard = PersonForm()
+    form_person_wizard.fields['tipe'].initial = "Wizard"
 
     if request.method == "POST":
         form_user = UserForm(request.POST)
@@ -71,7 +80,7 @@ def register(request):
             return redirect('main:login')
         else:
             messages.error(request, 'Sorry, there was an error creating your account and profile. Please try again.')
-    context = {'form':form_user, 'form_person':form_person}
+    context = {'form':form_user, 'form_person_muggle':form_person_muggle, 'form_person_wizard':form_person_wizard}
     return render(request, 'register.html', context)
 
 def login_user(request):
@@ -344,19 +353,22 @@ def get_reading_progress(request):
 def get_reading_progress_by_id(request, id):
     progresses = ReadingProgress.objects.filter(user=request.user)
     progress = progresses.get(pk=id)
-    return HttpResponse(serializers.serialize('json', progress))
+    data = serializers.serialize('json', [progress])
+    return JsonResponse(data, safe=False)
 
+@csrf_exempt
 def increment_progress(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
         current_progress = progress.get(pk=id)
-        if current_progress.book.pages > current_progress.progress:
+        if current_progress.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
         return HttpResponse(b"OK", status=200)
     
     return HttpResponseNotFound()
 
+@csrf_exempt
 def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
@@ -368,13 +380,22 @@ def add_review(request, id):
     
     return HttpResponseNotFound()
 
-def add_progression(request, id):
+@csrf_exempt
+def add_progression(request):
     if request.method == 'POST':
         user = request.user
-        # book = 
-        new_progress = ReadingProgress(user=user)
-        new_progress.save()
-        return HttpResponse(b"CREATED", status=201)
+        bookId = request.POST.get("newBook")
+        book = Bk.objects.get(pk = bookId)
+        existing_progress = ReadingProgress.objects.filter(user=user, book=book).first()
+        if existing_progress:
+            return HttpResponse(b"Duplicate entry - This book is already in progress for this user", status=400)
+        else:
+            title = book.title
+            image = book.image_url_s
+            pages = random.randint(100, 999)
+            new_progress = ReadingProgress(user=user, book=book, title=title, image=image, pages=pages)
+            new_progress.save()
+            return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
 

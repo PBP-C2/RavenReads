@@ -80,10 +80,7 @@
         <h2 id="question"></h2>
         <form id="quiz-form">
             {% csrf_token %}
-            <input type="radio" name="answer" value="0" id="option1"><label for="option1">Option 1</label><br>
-            <input type="radio" name="answer" value="3" id="option2"><label for="option2">Option 2</label><br>
-            <input type="radio" name="answer" value="7" id="option3"><label for="option3">Option 3</label><br>
-            <input type="radio" name="answer" value="10" id="option4"><label for="option4">Option 4</label><br>
+            {{ form }}
         </form>
         <button onclick="checkAnswer()">Next</button>
         {% if points > 0 %}
