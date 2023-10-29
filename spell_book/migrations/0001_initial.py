@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('main', '0005_book_readingprogress'),
+        ('main', '0004_remove_mainthread_user_remove_thread_user_and_more'),
     ]
 
     operations = [
