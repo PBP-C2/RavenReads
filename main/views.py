@@ -14,22 +14,29 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+import json
 
+import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import (HttpResponse, HttpResponseNotFound,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
+from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
+# from main.models import MainThread, Person, ReadingProgress, Thread
+from main.models import (Book, BookStore, Checkout, MainThread, Person,
+                         ReadingProgress, Thread)
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
-import csv
-from django.shortcuts import render
-from .models import Book
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_GET
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -249,6 +256,8 @@ def new_thread_ajax(request, id):
 
     return HttpResponseNotFound()
 
+import json
+import os
 def filter_thread_by_user(request, id):
     thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
     return HttpResponse(serializers.serialize('json', thread))
@@ -257,38 +266,74 @@ def get_person_name(request, id):
     person = Person.objects.get(pk=id)
     return HttpResponse(serializers.serialize('json', [person]))
 
-def import_books_from_csv(file_path):
-    with open(file_path, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            Book.objects.create(
-                title=row['title'],
-                cover=row['cover'],
-                pages=int(row['pages']),
-                author=row['author'],
-                rating=float(row['rating']),
-                price=int(row['price']),
-                description=row['description']
-            )
 
-def book_store(request):
-    # Panggil fungsi import_books_from_csv dengan menyediakan path ke file CSV dataset
-    file_path = 'D:\My Documents\College Task 3\PBP\tugas_kelompok\books.csv'  
-    import_books_from_csv(file_path)
-    # Query untuk mengambil semua objek Book dari basis data
-    books = Book.objects.all()
+from django.conf import settings
 
-    context = {
-        'books': books,  # Kirim daftar buku ke template
-    }
-    return render(request, 'book_store.html', context)
 
-    # context = {
-    #     'books': books,  # Kirim daftar buku ke template
-    # }
-    return render(request, 'book_store.html')
+def get_books_from_json(request):
+    json_file_path = os.path.join(settings.BASE_DIR, 'book', 'fixtures', 'Books.json')
+    with open('book/fixtures/Books.json', 'r') as json_file:
+        data = json.load(json_file)
+    return JsonResponse(data, safe=False)
 
 @login_required(login_url='/login')
+def book_store(request):
+    context = {}
+    try : 
+        # Ambil data dari model BookStore
+        bookstores = BookStore.objects.all()
+
+        # Gabungkan data dari model BookStore
+        combined_data = []
+        for bookstore in bookstores:
+            data = {
+                "title": bookstore.title,
+                "cover": bookstore.cover.url,
+                "author": bookstore.author,
+                "rating": float(bookstore.rating),
+                "price": int(bookstore.price),
+                "description": bookstore.description
+            }
+            combined_data.append(data)
+
+        context = {
+            'books': combined_data,
+        }
+    except Exception as error:
+        print("Gagal mengambil data buku:", error)
+
+    return render(request, 'book_store.html', context)
+
+
+def add_checkout_ajax(request):
+    if request.method == 'POST':
+        book_id = request.POST.get("book_id")
+        book = Book.objects.get(pk=book_id)
+        user = request.user
+
+        new_checkout = Checkout(user=user, book=book)
+        new_checkout.save()
+
+        return HttpResponse("Checkout added", status=201)
+
+    return HttpResponseNotFound()
+
+
+@require_GET
+def see_checkout_ajax(request):
+    user = Person.objects.filter(user =request.user).values().first()
+    # person = Person.objects.filter(user=user)
+    checkouts = Checkout.objects.select_related().filter(user=user['id']).values('book','book__title')
+
+    checkout_books = [{'id': checkout['book'], 'title': checkout['book__title']} for checkout in checkouts]
+
+    # data = serializers.serialize('json', {'checkout_books': checkout_books, 'user': user})
+    return JsonResponse({'checkout_books': checkout_books, 'user': user})
+
+   
+
+
+# @login_required(login_url='/login')
 def book_progression(request):
     person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":

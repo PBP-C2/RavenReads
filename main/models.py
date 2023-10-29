@@ -1,7 +1,9 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.db import models
+
+from book.models import Book
 
 # Create your models here.
 
@@ -30,14 +32,19 @@ class Thread(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-class Book(models.Model):
+class BookStore(models.Model):
     title = models.CharField(max_length=200)
     cover = models.ImageField(upload_to='images/')
-    pages = models.IntegerField()
     author = models.CharField(max_length=200)
     rating = models.DecimalField(max_digits=5, decimal_places=2)
     price = models.IntegerField()
     description = models.TextField()
+
+    book_reference = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+class Checkout(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
 class ReadingProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
