@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <title>Document</title>
 </head>
@@ -14,97 +15,97 @@
 {% block content %}
 
 <style>
-    .corner-button {
-        position: fixed;
-        bottom: 20px; /* Adjust the bottom and right values as needed */
-        right: 20px;
-        z-index: 999; /* Ensure the button appears above other content */
-    }   
-    #button_add {
-        background-color: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }   
-    #main-container{
-        padding: 10px;
-    }
-    #profile-wizard{
-        border: 2px solid rgb(43, 33, 234);
-        height: 100%;
-        width: 20%;
-    }
-    #profile{
-        border: 2px solid rgb(43, 33, 234);
-        height: 100%;
-        width: 100%;
-    }
-    #card-wizard{
-        border-radius: 30px;
-        background-color: #fb8805;
-    }
-    #card-muggle{
-      background-color: grey;
-    }
-    #image-profile{
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    #recent-inside{
-      background-color: #451952;
-      color:white;
-      border-radius: 30px;
-      padding: 30px;
-    }
   body {
-  background-color: rgb(255, 255, 255);
-  font-family: 'Poppins', sans-serif;
+    background-image: linear-gradient(to top, #151F54, #2b2997, #726fff);
+    font-family: 'Poppins', sans-serif;
   }
 
+  #body{
+    background-color: #060B29; /* Membuat background berwarna merah */
+    border-radius: 50px;
+    padding: 20px; /* Menambahkan padding untuk menciptakan ruang di sekeliling card */
+    margin-top: 20px; 
+    margin-right: 300px;
+    margin-left: 300px;
+    
+  }
+  .main-container{
+    justify-content: center;
+  }
+
+  h1{
+    color: #ffff;
+    margin: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 75px;
+    font-weight: bold;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  h4{
+    font-size: 30px;
+    color: #ffff;
+    font-weight: bold;
+  }
+
+  .main-thread-ajax{
+    background-color: (255, 255, 255, 0.5);
+  }
   .corner-button {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 999;
   }
-
+  
+  #user-filter{
+    border-radius: 50px;
+    width: 150px;
+    height: 40px;
+    margin-bottom: 30px;
+    margin-left: 27px;
+  }
   #button_add {
-    background-color: #222f5b; /* Ravenclaw blue */
+    background-color: #222f5b;
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 30px; /* Increased border radius */
+    border-radius: 30px;
     cursor: pointer;
   }
 
   #main-container {
     padding: 10px;
-
   }
 
   #profile-wizard {
-    border: 0px solid #222f5b; /* Ravenclaw blue */
+    border: 5px solid #fff;
     height: 100%;
     width: 20%;
   }
 
   #profile {
-    border: 0px solid #222f5b; /* Ravenclaw blue */
+    border: 5px solid #fff;
     height: 100%;
     width: 100%;
   }
 
   #card-wizard {
-    border-radius: 60px;
-    background-color: #00529b80; 
+    border-radius: 50px;
+    background-color: #0F1837;
+    width: 1000px;
+    margin-bottom: 5px;
+    margin-left: 100px;
   }
 
   #card-muggle {
-    background-color: rgba(218, 44, 44, 0.5); 
-    border-radius: 60px;
+    border-radius: 50px;
+    background-color: #0F1837;
+    width: 1000px;
+    margin-bottom: 5px;
+    margin-left: 100px;
   }
 
   #image-profile {
@@ -113,40 +114,91 @@
     object-fit: cover;
   }
 
-  .card-title, .card-text {
+  #recent-inside {
+    color: white;
+    border-radius: 30px;
+    padding: 30px;
+    margin-left: 0px;
+  }
+
+  .card-title{
+    font-size: 20px;
+    color:#726fff;
+    font-weight: bold;
+    margin-top: 30px;
+  }
+  .card-text {
     color: white;
     font-family: 'Poppins', sans-serif;
   }
 
+  .text-body-secondary {
+    color: white; /* Mengubah warna teks "Posted at" menjadi putih */
+    margin-top: 0px;
+  }
+
+  .card-clickable {
+    transition: transform 0.3s, filter 0.3s;
+  }
+
+  .card-clickable:hover {
+    filter: brightness(500%);
+    transform: scale(1.01);
+  }
+
+  .card-img-top{
+    border: 20px 20px 0 0; 
+    width: 50%; 
+    height: 50%; 
+    object-fit: cover; 
+    object-position: center; 
+    justify-content: center;
+    border-bottom: none;
+    margin-right: 10px;
+    margin-left:10px;
+    margin-top:30px;
+  }
+
+  
 </style>
 
+
 <body>
-  <div class="container" id="recent">
-    <div class="container" id="recent-inside">
-      <h4> Recently Viewed Threads </h4>
-      {% for item in recent %}
-        <a href="{% url 'main:open_main_thread' item.id %}" target="_blank">{{ item.title }}</a>
-      {% endfor %}
-    </div>
+  <div class="main-container">
+    <h1>Discussion Forum</h1>
   </div>
 
-  <div class="container">
-    <select class="form-select" id="user-filter">
-      <option value="">Select User</option>
-      {% for user in users %}
+  <div class="body" id="body">
+    <div class="container" id="recent">
+      <div class="container" id="recent-inside">
+        <h4> Recently Viewed Threads </h4>
+        {% for item in recent %}
+        <a href="{% url 'main:open_main_thread' item.id %}" target="_blank">{{ item.title }}</a><br>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="container">
+      <select class="form-select" id="user-filter">
+        <option value="">Select User</option>
+        {% for user in users %}
         <option value="{{ user.id }}">{{ user.name }}</option>
-      {% endfor %}
-    </select>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="container" id="main-thread-ajax">
+
+    </div>
   </div>
 
-    <div class="container" id="main-thread-ajax" style="border: 0px solid">
-    </div>
+  
 
-    <div class="corner-button">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Make New Thread Modal
-        </button>
-    </div>
+  <div class="corner-button">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Make New Thread Modal
+    </button>
+  </div>
 
     <!-- Modal for Making New Thread -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -197,7 +249,7 @@
     const mainThreadsWizard = await getMainThreadsWizard()  
     const mainThreadsMuggle = await getMainThreadsMuggle()
     
-  
+    
     
     
     let htmlString = await Promise.all(mainThreadsWizard.map(async (thread) => {
@@ -206,9 +258,10 @@
       // Membentuk HTML string
       return `
         <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(${thread.pk})">
-          <div class="row g-0">
+          <div class="row g-0 justify-content-center">
             <div class="col-md-4">
-              <img src="..." class="img-fluid rounded-start" alt="...">
+              <img src="https://img.icons8.com/?size=128&id=rZIbtkyaUTIy&format=png&color=FFc82b" class="card-img-top mx-auto d-block"alt="...">
+
             </div>
             <div class="col-md-8">
               <div class="card-body">
@@ -230,7 +283,7 @@
           <div class="card card-clickable mb-3" id="card-muggle" onclick="openThread(${thread.pk})">
             <div class="row g-0">
               <div class="col-md-4">
-                <img src="..." class="img-fluid rounded-start" alt="...">
+                <img src="https://img.icons8.com/?size=128&id=ywULFSPkh4kI&format=png&color=ffffff" class="card-img-top mx-auto d-block"alt="...">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
@@ -301,6 +354,22 @@
       const selectedValue = event.target.value;
       refreshPageFiltered(selectedValue); 
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const cardClickables = document.querySelectorAll('.card-clickable');
+    cardClickables.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        card.style.filter = 'brightness(90%)';
+        card.style.transform = 'scale(1.05)';
+      });
+
+      card.addEventListener('mouseleave', function() {
+        card.style.filter = 'brightness(100%)';
+        card.style.transform = 'scale(1)';
+      });
+    });
+  });
+</script>
 
 </script>
 {% endblock content %}

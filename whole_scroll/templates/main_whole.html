@@ -9,7 +9,7 @@
 <style>
     /* Styles from the first HTML block */
     body{
-        background-image: linear-gradient(to top, #151F54, #00025f,#004a83);;
+        background-image: linear-gradient(to top, #151F54, #2b2997,#726fff);;
     }
 
     .container {
@@ -24,11 +24,16 @@
         overflow: hidden;
         margin-top: 20px;
         width: 200px;
-        transition: transform 0.3s ease; /* Transisi efek zoom */
+        transition: transform 0.2s ease, opacity 5s ease; /* Added opacity transition */
+        opacity: 0; /* Initially, set opacity to 0 */
     }
 
     .card:hover {
         transform: scale(1.1); /* Efek zoom saat hover */
+    }
+
+    .card.show {
+        opacity: 1; /* Show the card when the 'show' class is added */
     }
 
     .card-img-top {
@@ -117,6 +122,25 @@
         var myModal = new bootstrap.Modal(document.getElementById("modal" + ID));
         myModal.show();
     }
+
+        // Function to add 'show' class to each card with a delay
+    window.addEventListener('load', function() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('show');
+        }, 100 * index); // Delay each card by 100ms * index
+    });
+    window.addEventListener('load', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Menambahkan class 'zoom' untuk melakukan perubahan ukuran saat kartu diklik
+                this.classList.toggle('zoom');
+            });
+        });
+    });
+    });
 </script>
 {% endblock content %}
 </html>

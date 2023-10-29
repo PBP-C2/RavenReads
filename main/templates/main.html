@@ -5,11 +5,20 @@
     <title>Contact Us</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+            @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: url(https://media0.giphy.com/media/rNxWvmpAl7vFNElrOu/giphy.gif?cid=ecf05e475lbdy84olx2rhr558575oacjkd7fn7vcjnwlnszq&ep=v1_gifs_related&rid=giphy.gif&ct=g);
+            background: url(https://media1.giphy.com/media/u6JLbqhLbS0jYxTB95/giphy.gif?cid=ecf05e47hwu7yrba2s6wwgn5i96o3hx457yrcdgbu0hatiwu&ep=v1_gifs_related&rid=giphy.gif&ct=g);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -38,11 +47,13 @@
             text-align: center;
             z-index: 2;
             margin-top: 50px;
+            padding: 20px;
+            animation: fadeIn 5s ease
         }
 
         h1 {
-            color: #FFC146;
-            font-size: 140px;
+            color:#726fff;
+            font-size: 100px;
             margin-bottom: 5px;
         }
 
@@ -64,11 +75,9 @@
             align-items: center;
             width: 100%;
             padding: 10px 20px;
-            position: absolute;
-            top: 50%;
-            left: 0;
             z-index: 2;
             color: #ffffff;
+
         }
 
         .navbar-container {
