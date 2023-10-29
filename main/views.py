@@ -122,6 +122,7 @@ def forum_discussion(request):
 
     context = {
         'user': request.user,
+        'users': Person.objects.all(),
         'main_thread': main_thread,
         'thread': thread,
         'form': form,
@@ -254,6 +255,14 @@ def new_thread_ajax(request, id):
 
 import json
 import os
+def filter_thread_by_user(request, id):
+    thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
+    return HttpResponse(serializers.serialize('json', thread))
+
+def get_person_name(request, id):
+    person = Person.objects.get(pk=id)
+    return HttpResponse(serializers.serialize('json', [person]))
+
 
 from django.conf import settings
 
@@ -323,7 +332,10 @@ def see_checkout_ajax(request):
 
 # @login_required(login_url='/login')
 def book_progression(request):
-    return render(request, 'book_progression.html')
+    person = Person.objects.get(user=request.user)
+    if person.tipe == "Wizard":
+        return render(request, 'book_progression.html')
+    return HttpResponseRedirect(reverse('main:show_main'))
 
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
@@ -331,13 +343,13 @@ def get_reading_progress(request):
 
 def get_reading_progress_by_id(request, id):
     progresses = ReadingProgress.objects.filter(user=request.user)
-    progress = progresses.filter(pk=id)
+    progress = progresses.get(pk=id)
     return HttpResponse(serializers.serialize('json', progress))
 
 def increment_progress(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         if current_progress.book.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
@@ -348,7 +360,7 @@ def increment_progress(request, id):
 def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
-        current_progress = progress.filter(pk=id)
+        current_progress = progress.get(pk=id)
         current_progress.rating = request.POST.get("rating")
         current_progress.review = request.POST.get("review")
         current_progress.save()
@@ -356,20 +368,38 @@ def add_review(request, id):
     
     return HttpResponseNotFound()
 
+def add_progression(request, id):
+    if request.method == 'POST':
+        user = request.user
+        # book = 
+        new_progress = ReadingProgress(user=user)
+        new_progress.save()
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
 @login_required(login_url='/login')
 def magic_quiz(request):
-    user = get_object_or_404(QuizPoint, user=request.user)
-    points = {
-        'points': user.points
+    user = request.user
+    points = 0
+    if user.is_authenticated:
+        user_points = QuizPoint.objects.filter(user=user)
+        if user_points.exists():
+            user_data = user_points.first()
+            points = user_data.points
+    context = {
+        'points': points
     }
-    return render(request, 'magic_quiz.html', points)
+    return render(request, 'magic_quiz.html', context)
 
 def quiz_points(request):
     if request.method == 'POST':
         total_points = request.POST.get('total_points', 0)
-        user = get_object_or_404(QuizPoint, user=request.user)
-        user.points = total_points
-        user.save()
+        user = request.user
+        if user.is_authenticated:
+            quiz_point, created = QuizPoint.objects.get_or_create(user=user)
+            quiz_point.points = total_points
+            quiz_point.save()
         return HttpResponseRedirect(reverse('main:quiz_results'))
     
 def quiz_results(request):
@@ -380,3 +410,6 @@ def quiz_results(request):
         'userPoints': user.points
     }
     return render(request, "quiz_results.html", books)
+    
+def show_about(request):
+    return render(request, "about.html")

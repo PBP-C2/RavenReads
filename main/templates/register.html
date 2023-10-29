@@ -7,24 +7,27 @@
 
 {% block content %} 
 <style>
+    body{
+        background-image: linear-gradient(to top, #151F54, #2b2997, #726fff);
+    }
     .register{
         width: 100%;
         padding: 1%;
-        background-color: #0e1a40;
         border-radius: 10px;
     }
     .title-choose{
         text-align: center;
         color: white;
         border-radius: 10px;
-        background-color: #946b2d;
     }
     .container-left{
         width: 100%;
         padding: 1%;
         float: left;
-        height: 30rem;
-        transition: all 0.2s;
+        height: 50rem;
+        transition: all 1.2s;
+        margin-top: 90px;
+        margin-bottom: 90px;
     }
     .container-left:hover{
         transform: scale(1.03);
@@ -33,8 +36,10 @@
         width: 100%;
         padding: 1%;
         float: right;
-        height: 30rem;
-        transition:  all 0.2s;
+        height: 50rem;
+        transition:  all 1.2s;
+        margin-top: 90px;
+        margin-bottom: 90px;
     }
     .container-right:hover{
         transform: scale(1.03);
@@ -44,11 +49,17 @@
         text-align: center;
         transition: 0s;
         height: 100%;
-        background-color:#4702a7;
-        border-radius: 10px;
+        border-radius: 100px;
+        margin-left: 20px;
+        background-color: rgba(6, 11, 41, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
     }
     .container-left-inside:hover{
-        background-image: url(https://cdn.oneesports.id/cdn-data/sites/2/2022/08/Updatee-Genshin-Impact-versi-3.0-1.jpg);
+        background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/c665c571186845.5bbcda433302b.jpg);
         background-size: cover;
     }
     .container-right-inside{
@@ -56,12 +67,18 @@
         text-align: center;
         transition: 0s;
         height: 100%;
-        background-color:#4702a7;
-        border-radius: 10px;
+        border-radius: 100px;
+        margin-left: 20px;
+        background-color: rgba(6, 11, 41, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
     }
 
     .container-right-inside:hover{
-        background-image: url(https://oyster.ignimgs.com/mediawiki/apis.ign.com/genshin-impact/2/24/Key_art_EN.png);
+        background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/bd91ce71186845.5bbcda4334bbb.jpg);
         background-size: cover;
     }
     .form-group{
@@ -72,23 +89,43 @@
         margin-top: 1%;
         margin-bottom: 1%;
     }
+
+    h1{
+        text-align: center;
+        justify-content: center;
+        font-weight: bold;
+
+    }
+
+    h2 {
+            color:#ffffff;
+            font-size: 50px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+    .hidden {
+    display: none;
+}
 </style> 
 
 <body>   
-    <div class = "container-xl register d-flex flex-column">
+
+    
+    <div class="container-xl register d-flex flex-column">
         <h2 class="title-choose">Choose A Side</h2>
         <div class="row container-outer">
             <div class="col-12 col-lg-6">
                 <div class="container-left" id="container-left">
                     <div class="container-left-inside">
-                        <h1 class="text-wizard" style="color:white">Wizard</h1>
+                        <h1 class="text-wizard hidden" style="color:white">Wizard</h1>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-lg-6">
                 <div class="container-right" id="container-right">
                     <div class="container-right-inside">
-                        <h1 style="color:white">Muggle</h1>
+                        <h1 style="color:white" class="hidden">Muggle</h1>
                     </div>
                 </div>
             </div>
@@ -231,6 +268,31 @@
                 myModal.show();
             });
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        var wizardText = document.querySelector(".text-wizard");
+        var muggleText = document.querySelector(".container-right-inside h1");
+
+        var showModalBtnWizard = document.getElementById("container-left");
+        var showModalBtnMuggle = document.getElementById("container-right");
+
+        showModalBtnWizard.addEventListener("mouseover", function () {
+            wizardText.classList.add("hidden");
+        });
+
+        showModalBtnWizard.addEventListener("mouseout", function () {
+            wizardText.classList.remove("hidden");
+        });
+
+        showModalBtnMuggle.addEventListener("mouseover", function () {
+            muggleText.classList.add("hidden");
+        });
+
+        showModalBtnMuggle.addEventListener("mouseout", function () {
+            muggleText.classList.remove("hidden");
+        });
+    });
+        
     </script>
 </body>
 {% endblock content %}

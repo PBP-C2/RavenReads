@@ -11,12 +11,33 @@
 {% block content %}
 <style>
     .container-main{
-        border: 2px solid rgb(43, 33, 234);
+        /* background-color:#060B29 ; */
         width: 100%;
         padding: 1%;
-        border-radius: 10px;
+        border-radius: 50px;
+        color: #ffffff;
     }
-    
+    h5{
+        font-size: 25px;
+        font-weight: bold;
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    p{
+        font-size: 15px;
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+
+    .container-main .col-10 {
+        font-size: 50px;
+        font-weight: bold;
+        color:#ffffff;
+        margin-top: 45px;
+    }
+
     #button-reply{
         background-color: #3498db;
         color: white;
@@ -25,68 +46,131 @@
         border-radius: 5px;
         cursor: pointer;
         width: 100%;
+        
     }
     #container-button-reply{
         width: 100%;
-        padding-top: 0.5%;
-        padding-bottom: 0.5%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
     }
+
+    .reply{
+        border-radius: 100px;
+        margin-left: 20px;
+        background-color: rgba(6, 11, 41, 0.7);
+        padding: 20px; /* Menambahkan padding untuk menciptakan ruang di sekeliling card */
+    }
+    body {
+        background-image: linear-gradient(to top, #151F54, #2b2997, #726fff);
+        font-family: 'Poppins', sans-serif;
+    }
+
+
+    .card-img-top{
+    width: 50%; 
+    height: 50%; 
+    object-fit: cover; 
+    object-position: center; 
+    justify-content: center;
+    border-bottom: none;
+    margin-right: 10px;
+    margin-left:10px;
+    margin-top:30px;
+  }
+
+  .container-main.reply {
+    border-radius: 40px;
+    padding: 20px;
+    margin-right: 20px;
+}
+
+    .container-main.reply p {
+        margin: 5px 0;
+        margin-left: 30px;
+    }
+
+    .container-main.reply p:first-child {
+        font-weight: bold;
+        color: #aaa9ff;
+        font-size: 20px;
+        margin-left: 30px;
+    }
+
+    .container-main.reply p:last-child {
+        color: #ffffff;
+        font-size: 15px;
+        margin-left: 30px;
+    }
+    .container-main.reply {
+    border-radius: 40px;
+    padding: 20px;
+    margin-right: 20px;
+    opacity: 0; /* Set elemen menjadi tidak terlihat saat awal */
+    animation: fadeIn 1s ease forwards; /* Menerapkan animasi fadeIn */
+}
+
+    @keyframes fadeInFromTop {
+        0% { opacity: 0; transform: translateY(-20px); } /* Awalnya tidak terlihat dan sedikit di atas */
+        100% { opacity: 1; transform: translateY(0); } /* Muncul dengan translasi ke posisi normal */
+    }
+
 </style>
 
 <body>
-    <div class="container-main">
-        <div class="container-profile">
-            <div class="row">
-                <div class="col-2">
-                    <img src="{% static 'readme/wizard_logo.jpg' %}" alt="Profile Picture" width="50px" height="50px">
-                </div>
-                <div class="col-10">
-                    <h3>{{ main_thread.person.name }}</h3>                    
-                </div>
-            </div>
-        </div>
-        <h5>Ini dari Thread dengan Judul {{ main_thread.title }}</h1>
-        <p>{{ main_thread.content }}</p>
-    </div>
-    <div id="container-button-reply">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Make New Thread Modal
-          </button>
-    </div>
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="form" onsubmit="return false;">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="content" class="col-form-label">Content:</label>
-                            <input type="text" class="form-control" id="content" name="content"></input>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal" >Make New Threads</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-      <div class="container" id="test-ajax">
-
-      </div>
-
-        {% for reply in thread %}
+    <div class="container">
         <div class="container-main">
-                <p>{{ reply.content }}</p>
+            <div class="container-profile">
+                <div class="row">
+                    <div class="col-2">
+                        <img src="https://img.icons8.com/?size=128&id=rZIbtkyaUTIy&format=png&color=FFc82b" class="card-img-top mx-auto d-block"alt="...">
+                    </div>
+                    <div class="col-10">
+                        <h3>{{ main_thread.person.name }}</h3>                    
+                    </div>
+                </div>
+            </div>
+            <h5>Book Review: {{ main_thread.title }}</h1>
+            <p>{{ main_thread.content }}</p>
         </div>
-        {% endfor %}
+        <div id="container-button-reply">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Add Comment
+              </button>
+        </div>
+    </div>
+
+    <div class="body" id="body">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form" onsubmit="return false;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="content" class="col-form-label">Content:</label>
+                                <input type="text" class="form-control" id="content" name="content"></input>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="button_add_ajax" data-bs-dismiss="modal" >Make New Threads</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="container" id="test-ajax">
+
+        </div>
+    </div>
 
         
 </body>
@@ -94,21 +178,39 @@
     async function getThreadsReply() {
         return fetch("{% url 'main:get_thread_json' 0 %}".replace("0", "{{ main_thread_id }}")).then((res) => res.json())
     }
+    async function getReplyPersonName(ID) {
+        return fetch("{% url 'main:get_person_name' 0 %}".replace("0", ID)).then((res) => res.json())
+    }
+
 
     async function refreshPage() {
-        document.getElementById("test-ajax").innerHTML = ""
-        const replyThread = await getThreadsReply()
+        document.getElementById("test-ajax").innerHTML = ""; // Kosongkan konten sebelum menambahkan yang baru
 
-        let htmlString = ``
+        const replyThread = await getThreadsReply();
+        const replyElements = [];
 
-        replyThread.forEach((thread) => {
-            htmlString += `\n
-                <p1>${thread.fields.content}</p1>\n
-                ` 
-        })  
-            document.getElementById("test-ajax").innerHTML = htmlString
+        for (let i = 0; i < replyThread.length; i++) {
+            const thread = replyThread[i];
+            const personNames = await getReplyPersonName(thread.fields.person);
+
+            const delay = (i + 1) * 0.5; // Setiap elemen muncul dengan jeda waktu 0.5 detik
+            const replyHTML = `
+                <div class="container-main reply" style="animation: fadeInFromTop 1s ease forwards ${delay}s;margin-bottom: 10px;">
+                    <p>${personNames[0].fields.name}</p>
+                    <p>${thread.fields.content}</p>
+                </div>
+            `;
+            replyElements.push(replyHTML);
+        }
+
+        for (let j = 0; j < replyElements.length; j++) {
+            const element = replyElements[j];
+            document.getElementById("test-ajax").innerHTML += element;
+        }
     }
-    refreshPage() 
+    refreshPage();
+
+
 
     function makeNewThread() {
         fetch("{% url 'main:new_thread_ajax' 0 %}".replace("0", "{{ main_thread_id }}"), {
