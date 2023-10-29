@@ -27,6 +27,8 @@ from django.urls import reverse
 from main.forms import MainThreadForm, PersonForm, ThreadForm
 from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
 
+from book.models import Book as Bk
+
 import csv
 from django.shortcuts import render
 from .models import Book
@@ -312,6 +314,7 @@ def increment_progress(request, id):
     
     return HttpResponseNotFound()
 
+@csrf_exempt
 def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
@@ -323,13 +326,19 @@ def add_review(request, id):
     
     return HttpResponseNotFound()
 
-def add_progression(request, id):
+@csrf_exempt
+def add_progression(request):
     if request.method == 'POST':
         user = request.user
-        # book = 
-        new_progress = ReadingProgress(user=user)
-        new_progress.save()
-        return HttpResponse(b"CREATED", status=201)
+        bookId = request.POST.get("newBook")
+        book = Bk.objects.get(pk = bookId)
+        existing_progress = ReadingProgress.objects.filter(user=user, book=book).first()
+        if existing_progress:
+            return HttpResponse(b"Duplicate entry - This book is already in progress for this user", status=400)
+        else:
+            new_progress = ReadingProgress(user=user, book=book)
+            new_progress.save()
+            return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
 

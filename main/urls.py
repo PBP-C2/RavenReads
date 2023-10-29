@@ -5,7 +5,7 @@ from main.views import get_main_thread_muggle_json, get_thread_json, new_thread_
 from main.views import (book_progression, book_store, forum_discussion,
                         get_reading_progress, import_books_from_csv,
                         login_user, logout_user, make_thread, open_main_thread,
-                        register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results, show_about)
+                        register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results, show_about, add_progression)
 
 app_name = 'main'
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('get-progression/<int:id>/', get_reading_progress_by_id, name='get_reading_progress_by_id'),
     path('increment-progress/<int:id>/', increment_progress, name='increment_progress'),
     path('add-review/<int:id>/', add_review, name='add_review'),
+    path('add-progression/', add_progression, name='add_progression'),
     path('book_store/', book_store, name='book_store'),
     path('get-progression/<int:id>/', get_reading_progress_by_id, name='get_reading_progress_by_id'),
     path('increment-progress/<int:id>/', increment_progress, name='increment_progress'),

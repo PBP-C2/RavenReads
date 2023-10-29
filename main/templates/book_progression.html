@@ -9,7 +9,7 @@
     .book-progress {
         background-color: #aaaaaa;
         color: white;
-        border: 1px solid darkorchid;
+        /* border: 1px solid darkorchid; */
         border-radius: 10px;
         padding: 10px;
         font-family: 'Roboto', sans-serif;
@@ -39,13 +39,13 @@
     .image-column {
         width: 20%;
         vertical-align: middle;
-        border: 1px solid red;
+        /* border: 1px solid red; */
     }
     
     .title-column {
         width: 20%;
         vertical-align: middle;
-        border: 1px solid blue;
+        /* border: 1px solid blue; */
     }
     
     td.title-column {
@@ -56,45 +56,56 @@
     .progress-bar-column {
         width: 30%;
         vertical-align: middle;
-        border: 1px solid green;
+        /* border: 1px solid green; */
     }
     
     .progress-column {
         width: 15%;
         vertical-align: middle;
-        border: 1px solid brown;
+        /* border: 1px solid brown; */
     }
 
     .review-column {
         width: 15%;
         vertical-align: middle;
-        border: 1px solid darkgoldenrod;
+        /* border: 1px solid darkgoldenrod; */
     }
 
-    #reviewModal {
+    #reviewModal, #newBookModal {
         color: black;
     }
 
-    #reviewModal .modal-body{
+    #reviewModal .modal-body,
+    #newBookModal .modal-body{
         text-align: left;
     }
+
+    /* .table-responsive {
+        border: 1px solid blue;
+    } */
     
     h3 {
-        background-color: #cccccc;
-        width: 40%;
-        border-radius: 10px;
+        width: 100%;
+        /* background-color: #cccccc;
+        border-radius: 10px; */
+        /* border: 1px solid darkolivegreen; */
         padding: 7px;
-        border: 1px solid darkolivegreen;
+        margin: 0px;
+        text-align: left;
     }
 
     #searchBar {
-        width: 50%;
+        width: 100%;
     }
 
+    #addBookButton {
+        height: 100%;
+    }
+    .col-md-2, .col-md-4,
     .col-md-6 {
         display: flex;
         align-items: center;
-        border: 1px solid darkkhaki;
+        /* border: 1px solid darkkhaki; */
     }
     
     .book-progress-title {
@@ -107,29 +118,36 @@
     </style>
 
 <div class="book-progress">
-    <div class="container text-center">
+    <div class="container-fluid text-center">
         <div class="row">
-            <div class="col-md-6 book-progress-title">
+            <div class="col-md-6 col-sm-12 mb-2 book-progress-title">
                 <h3>Book Progression</h3>
             </div>
-            <div class="col-md-6 book-progress-search">
+            <div class="col-md-4 col-sm-12 mb-2 book-progress-search">
                 <input type="search" id="searchBar" class="form-control" placeholder="Search">
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2">
+                <button type="button" id="addBookButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newBookModal">Add New Book</button>
             </div>
         </div>
     </div>
-    <table class="table progress-table table-striped">
-        <thead id="progressTableHeader">
-            <tr>
-                <th class="image-column">Image</th>
-                <th class="title-column">Book Title</th>
-                <th class="progress-bar-column">Progress Bar</th>
-                <th class="progress-column">Progress</th>
-                <th class="review-column">Review</th>
-            </tr>
-        </thead>
-        <tbody id="progressTableBody">
-        </tbody>
-    </table>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table progress-table table-striped">
+                <thead id="progressTableHeader">
+                    <tr>
+                        <th class="image-column">Image</th>
+                        <th class="title-column">Book Title</th>
+                        <th class="progress-bar-column">Progress Bar</th>
+                        <th class="progress-column">Progress</th>
+                        <th class="review-column">Review</th>
+                    </tr>
+                </thead>
+                <tbody id="progressTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="modal" id="reviewModal" tabindex="-1">
         <div class="modal-dialog">
@@ -138,7 +156,7 @@
                     <h5 class="modal-title">Review</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="" id="form" onsubmit="return false"></form>
+                    <form action="" id="reviewForm" onsubmit="return false">
                         {% csrf_token %}
                         <input type="hidden" id="userId" name="user_id">
                         <div class="mb-3">
@@ -155,10 +173,34 @@
                             <label for="review" class="col-form-label">Review:</label>
                             <input type="text" class="form-control" id="review" name="review"></input>
                         </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveButton">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="reviewSaveButton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="newBookModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New book progress</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="newBookForm" onsubmit="return false">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="newBook" class="col-form-label">Book ID:</label>
+                            <input type="text" class="form-control" id="newBook" name="newBook"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="newBookCloseButton">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="newBookSaveButton">Save changes</button>
                 </div>
             </div>
         </div>
@@ -167,31 +209,36 @@
 
 <script>
     async function getProgress() {
-        return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json())
+        return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json());
+    }
+
+    async function getBooks() {
+        return fetch("{% url 'book:get_books' %}").then((res) => res.json());
     }
 
     async function refreshProgress(filterValue = '') {
-        document.getElementById("progressTableBody").innerHTML = ""
-        const progresses = await getProgress()
-        let htmlString = ``
-        let matchingBookFound = false
+        document.getElementById("progressTableBody").innerHTML = "";
+        const progresses = await getProgress();
+        let htmlString = ``;
+        let matchingBookFound = false;
         if (progresses.length < 1) {
             htmlString += `<tr>
-                                <td class="progress-column" colspan="5">No matching book</td>
-                            </tr>`
+                                <td class="progress-column" colspan="5">You haven't made any reading progress</td>
+                            </tr>`;
         } else {
             progresses.forEach((progress) => {
                 if (filterValue === '' || progress.fields.book.title.toLowerCase().includes(filterValue.toLowerCase())) {
-                    matchingBookFound = true
+                    let randomPage = Math.floor(Math.random() * 900) + 100;
+                    matchingBookFound = true;
                     htmlString += `<tr>
-                                    <td><img src=${progress.fields.book.cover}</td>
-                                    <td>${progress.fields.book.title}</td>
+                                    <td><img src=${progress.fields.book.fields.image_url_s}</td>
+                                    <td>${progress.fields.book.fields.title}</td>
                                     <td>
                                         <div class="progress" role="progressbar">
-                                            <div class="progress-bar" style="width: ${(progress.fields.progress / progress.fields.book.pages) * 100}%"></div>
+                                            <div class="progress-bar" style="width: ${(progress.fields.progress / randomPage) * 100}%"></div>
                                         </div>
                                     </td>
-                                    <td>${progress.fields.progress}/${progress.fields.book.pages}
+                                    <td>${progress.fields.progress}/${randomPage}
                                         <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="incrementProgress(${progress.fields.pk})">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -203,19 +250,19 @@
                                             Review
                                         </button>
                                     </td>
-                                </tr>`
+                                </tr>`;
                 }
-            })
+            });
             if (matchingBookFound) {
                 htmlString += `<tr>
                                 <td class="title-column" colspan="5">No matching book</td>
-                            </tr>`
+                            </tr>`;
             }
         }
-        document.getElementById("progressTableBody").innerHTML = htmlString
+        document.getElementById("progressTableBody").innerHTML = htmlString;
     }
 
-    refreshProgress()
+    refreshProgress();
 
     document.getElementById("searchBar").addEventListener('input', function (event) {
         const filterValue = event.target.value;
@@ -228,9 +275,9 @@
             fetch("{% url 'main:get_reading_progress_by_id' 0 %}".replace('0', userId))
                 .then((res) => res.json())
                 .then((data) => {
-                    document.getElementById('userId').value = userId
-                    const ageSelect = document.getElementById('rating')
-                    ageSelect.value = data.rating
+                    document.getElementById('userId').value = userId;
+                    const ageSelect = document.getElementById('rating');
+                    ageSelect.value = data.rating;
                     ageSelect.querySelectorAll('option').forEach(option => {
                         if (option.value == data.rating) {
                             option.selected = true
@@ -238,37 +285,52 @@
                             option.selected = false
                         }
                     })
-                    document.getElementById('review').value = data.review
-                })
+                    document.getElementById('review').value = data.review;
+                });
         })
-    })
+    });
 
-    document.getElementById("saveButton").addEventListener('click', function () {
-        const userId = document.getElementById('userId').value
-        const selectedRating = document.getElementById('rating').value
-        const formData = new FormData(document.querySelector("#form"))
-        formData.append('rating', selectedRating)
+    document.getElementById("reviewSaveButton").addEventListener('click', function () {
+        const userId = document.getElementById('userId').value;
+        const selectedRating = document.getElementById('rating').value;
+        const formData = new FormData(document.querySelector("#reviewForm"));
+        formData.append('rating', selectedRating);
         fetch("{% url 'main:add_review' 0 %}".replace('0', userId), {
             method: 'POST',
             body: formData
-        }).then(refreshProgress)
+        }).then(refreshProgress);
+    });
+
+    // async function addNewBook() {
+    //     const books = await getBooks()
+    //     const booksPk = document.
+    //     for (let i = 0; i < books.length; i++) {
+    //         const book = books[i]
+    //     }
+    // }
+
+    document.getElementById("newBookSaveButton").addEventListener('click', function () {
+        fetch("{% url 'main:add_progression' %}", {
+            method: 'POST',
+            body: new FormData(document.querySelector("#newBookForm"))
+        }).then(refreshProgress);
+
+        resetModal();
     })
 
+    
     function incrementProgress(id) {
         fetch("{% url 'main:increment_progress' 0 %}".replace('0', id), {
             method: "POST",
-        }).then(refreshProgress)
-
-        return false
-    }
-
-    function addReview(id) {
-        fetch("{% url 'main:add_review' 0 %}".replace('0', id), {
-            method: "POST",
-            body: new FormData(document.querySelector("#form"))
-        }).then(refreshProgress)
+        }).then(refreshProgress);
         
-        return false
+        return false;
     }
+
+    function resetModal() {
+        document.getElementById("newBookForm").reset();
+    }
+
+    document.getElementById("newBookCloseButton").onclick = resetModal;
 </script>
 {% endblock content %}
