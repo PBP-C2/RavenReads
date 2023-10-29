@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% load widget_tweaks %}
+<!-- {% extends "base.html" %} -->
 
 {% block meta %}
     <title>Login</title>
@@ -7,65 +6,74 @@
 
 {% block content %}
 <style>
-    body{
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
         background-image: url("https://media4.giphy.com/media/yEXZQ5m3u3pDHZLuPi/giphy.gif?cid=ecf05e4753bxtgtpj02tvuzm5cdxcf4zk6xfgb2zv1uzuamm&ep=v1_gifs_related&rid=giphy.gif&ct=g");
-        background-size: cover; /* Menutupi seluruh area */
-        min-height: 100vh; /* Mengisi tinggi layar */
+        background-size: cover;
     }
 
-    .login{
-        width: 50%;
+    .container-fluid.login {
+        width: 400px;
         padding: 4%;
-        padding-bottom: 2%;
-        margin: 50px auto;
-        margin-bottom: 0px;
         font-family: 'Roboto', sans-serif;
-        display: flex; /* Use flexbox for centering */
-        flex-direction: column; /* Stack content vertically */
-        justify-content: center; /* Center content vertically */
-        align-items: center; /* Center content horizontally */
-        text-align: center; /* Center text within the container */
-        border-radius:30px;
-        background-color: rgba(6, 11, 41, 0.7); 
+        display: flex;
+        border-radius: 30px;
+        background-color: rgba(6, 11, 41, 0.7);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 50px auto;
     }
-    .login-text{
+
+    .login-text {
         color: white;
         text-align: center;
         margin-bottom: 20px;
     }
-    .btn.login_btn{
-        background-color: #ff4d4d;
-        border: none;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-    }
-    .form-control{
+
+
+    .form-control {
         width: 100%;
         height: 40px;
         background-color: #f2f2f2;
         border: none;
         padding: 0px 10px;
+        margin-bottom: 5px;
+        border-radius: 50px;
+    }
+
+    .ask-register {
+        margin-top: 0px; /* Mengatur margin ke 20px */
         margin-bottom: 20px;
     }
-    .td-form{
-        width: 300px;
-    }
-    .ask-register{
-        margin-top: 15%;
-    }
-    #submit-button{
-        background-color:#946b2d;
+
+    #submit-button {
+        background-color: #726fff;
         border: none;
         transition: all 0.2s;
+        margin-top: 20px;
+        margin-bottom: 0px;
+        font-size: 15px;
+        padding: 10px 30px; /* Penyesuaian ukuran tombol */
+        border-radius: 50px;
     }
-    #submit-button:hover{
+
+    #submit-button:hover {
         transform: scale(1.1);
     }
 
+    .valid-feedback {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
 </style>
+
 
 <div class ="container-fluid login">
     <div class="container-fluid" id="main-container">
@@ -85,7 +93,7 @@
             </div>
         </div>
         <div class="row-md-4">
-            <button class="btn btn-primary" type="submit" id="submit-button">Submit</button>
+            <button class="btn btn-primary" type="submit" style="color:white;" id="submit-button">Submit</button>
         </div>
     </div>
     
@@ -116,7 +124,7 @@
     
     <div class="ask-register">
         <p style="color:white;">Not a wizard yet?</p>
-        <a href="{% url 'main:register' %}">Be a wizard here!</a>   
+        <a style="color: #726fff" href="{% url 'main:register' %}">Be a wizard here!</a>   
     </div>
      
 

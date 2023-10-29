@@ -36,8 +36,10 @@ ALLOWED_HOSTS = []
 STATIC_URL = '/static/'
 
 # Define the STATICFILES_DIRS to specify where Django should look for static files
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 
 
 # Application definition
@@ -53,7 +55,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
