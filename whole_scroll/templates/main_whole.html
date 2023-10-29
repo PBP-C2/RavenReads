@@ -78,6 +78,16 @@
         <h1>Whole Scroll</h1>
         <h2>Discover your favorite books, woven by the talented hands of wizards and muggles alike.</h2>
     </div>
+
+    <div class="container">
+        <select class="form-select" id="user-filter">
+          <option value="">Select User</option>
+          {% for user in users %}
+            <option value="{{ user.id }}">{{ user.name }}</option>
+          {% endfor %}
+        </select>
+    </div>
+
     <div class="container">
         <div class="row">
             {% for scroll in scrolls %}
@@ -111,12 +121,24 @@
             {% endfor %}
         </div>
     </div>
+    <div class="container" id="container-temp">
+
+    </div>
 </body>
 <script>
     async function openScroll(ID) {
         var myModal = new bootstrap.Modal(document.getElementById("modal" + ID));
         myModal.show();
     }
+
+    const selectUser = document.getElementById('user-filter');
+    selectUser.addEventListener('change', function(event) {
+      const selectedValue = event.target.value;
+      const url = "{% url 'whole_scroll:main_page_by_id' 0 %}".replace("0", selectedValue);
+    
+        // Redirect to the generated URL
+        window.location.href = url;
+    });
 </script>
 {% endblock content %}
 </html>

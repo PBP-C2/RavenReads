@@ -115,6 +115,13 @@
         </div>
     </div>
 
+    <div class="container" id="cookie" style="background-color: #fff;">
+        <h3>You have made this book(s) in this session!</h3>
+        {% for item in recently_made %}
+            <p>{{ item.title }}</p>
+        {% endfor %}
+    </div>
+
     <div class="container" id="container-book">
         <div class="row justify-content-center"id="scroll-json">
 
@@ -161,7 +168,6 @@
     }
 
     document.getElementById("button_add_ajax").onclick = makeNewScroll
-
 </script>
 {% endblock content %}
 </html>
