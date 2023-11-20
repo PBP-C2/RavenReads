@@ -1,135 +1,298 @@
+{% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block meta %}
     <title>Book Store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-        .header {
-            text-align: left;
-            padding: 20px;
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .card {
-            width: 300px;
-            height: 450px;
-            margin: 10px;
-            perspective: 1000px;
-        }
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.5s;
-            transform-style: preserve-3d;
-        }
-        .card:hover .card-inner {
-            transform: rotateY(180deg);
-        }
-        .front,
-        .back {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
-        }
-        .back {
-            transform: rotateY(180deg);
-            text-align: left;
-            padding: 10px;
-            display: none;
-            background-color: white;
-        }
-        .card img {
-            max-width: 100%;
-            max-height: 60%;
-        }
-        .card h2 {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .card p {
-            font-size: 14px;
-        }
-    </style>
+    {% endblock meta %}
 </head>
+    {% block content %}
+<style>
+    body {
+        background-color: #f0f0f0;
+    }
+    .header {
+        text-align: left;
+        padding: 20px;
+    }
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .card {
+        width: calc(20% - 20px);
+        height: 250px;
+        margin: 10px;
+        perspective: 1000px;
+        text-align: center;
+        margin-top: 10px;
+        border : none;
+        display: flex; /* Menjadikan card elemen berbasis flex */
+        flex-direction: column; /* Mengatur tata letak kolom */
+        align-items: center; /* Menyusun elemen secara tengah */
+        justify-content: center;
+    }
+    
+    .front{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        backface-visibility: hidden;
+        display: flex; /* Menjadikan card elemen berbasis flex */
+        flex-direction: column; /* Mengatur tata letak kolom */
+        align-items: center; /* Menyusun elemen secara tengah */
+        justify-content: center;
+    }
+
+    .front p {
+    margin-top: 5px; /* Menambahkan jarak antara judul dan ID */
+    font-size: 12px;
+    }
+    .card img {
+        max-width: 80%;
+        max-height: 60%;
+    }
+    .card h2 {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+    .card p {
+        font-size: 14px;
+        margin: 5px;
+    }
+
+    #searchInput {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #searchButton, #checkoutButton, #addBookButton {
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        float : right;
+        /* margin-left : 400px; */
+    }
+
+    #addBookButton {
+        margin-left : auto;
+        margin-right : auto;
+    }
+
+    #checkoutButton {
+        margin-left : auto;
+        margin-right : auto;
+    }
+
+    .header {
+
+        grid-template-columns: auto 1fr;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px;
+        background-color: black;
+        color: white;
+        display: flex;
+
+    }
+
+    .title {
+        font-size: 24px;
+        margin-right: -120px
+    }
+
+    .title-search {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+
+    .search-bar {
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    .search-bar input[type="text"] {
+        display: flex;
+        width: 400px; 
+        padding: 30px;
+    }
+
+    .search-bar button {
+        display: flex;
+        padding: 5px 10px;
+        background-color: white;
+        color: black;
+        border: none;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+</style>
 <body>
     <div class="header">
-        <h1>Book Store</h1>
+        <div class="modal fade" id="addModal2" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addModalLabel" style="color: black;">List of Your Checkout</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            <div class="modal-content">
+                                <div id="checkoutList" style="color: black;"></div>
+                                <div id="bookTitle"></div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addModalLabel">Add New Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form" onsubmit="return false;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="book_id" class="col-form-label form-label" style="color: black;">Enter the Book ID:</label>
+                                <input type="number" class="form-control" id="book_id" name="book_id"></input>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="search-bar button" id="button_add" data-bs-dismiss="modal">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="title-search">
+            <h1>Book Store</h1>
+            <div class="search-bar">
+                <div class="row">
+                    <!-- <div class="col">
+                        <input type="text" id="searchInput" placeholder="Search books...">
+                    </div> -->
+                    <!-- <div class="col">
+                        <button id="searchButton">Search</button>
+                    </div> -->
+                    <div class="col">
+                    <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal" >Add Book to Checkout</button>
+                    </div>
+                    <div class="col">
+                    <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2">See The Checkout</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container" id="bookContainer">
-       
     </div>
 
     <script>
         // Dataset buku dalam bentuk array JavaScript
-        const booksData = [
-            { title: "Judul Buku 1", description: "Deskripsi buku 1", cover: "cover1.jpg", rating: "5", price: "$10.00" },
-            { title: "Judul Buku 2", description: "Deskripsi buku 2", cover: "cover2.jpg", rating: "4.5", price: "$12.00" },
-            { title: "Judul Buku 3", description: "Deskripsi buku 3", cover: "cover3.jpg", rating: "4.8", price: "$15.00" },
-            { title: "Judul Buku 4", description: "Deskripsi buku 4", cover: "cover4.jpg", rating: "4.2", price: "$9.99" },
-            { title: "Judul Buku 5", description: "Deskripsi buku 5", cover: "cover5.jpg", rating: "4.7", price: "$14.50" },
-            { title: "Judul Buku 6", description: "Deskripsi buku 6", cover: "cover6.jpg", rating: "4.0", price: "$7.99" },
-            { title: "Judul Buku 7", description: "Deskripsi buku 7", cover: "cover7.jpg", rating: "4.5", price: "$12.50" },
-            { title: "Judul Buku 8", description: "Deskripsi buku 8", cover: "cover8.jpg", rating: "4.3", price: "$11.99" },
-            { title: "Judul Buku 9", description: "Deskripsi buku 9", cover: "cover9.jpg", rating: "4.8", price: "$15.00" },
-            { title: "Judul Buku 10", description: "Deskripsi buku 10", cover: "cover10.jpg", rating: "4.5", price: "$12.50" }
-        ];
+        const booksData = [];
 
         // Ambil elemen kontainer
         const bookContainer = document.getElementById("bookContainer");
 
-        // Loop melalui data buku dan buat kartu untuk setiap buku
-        booksData.forEach(book => {
-            const card = document.createElement("div");
-            card.classList.add("card");
+        async function fetchBooks(){
+            try {
+            const response = await fetch('/get_books_from_json/');
+            const data = await response.json();
+            booksData.push(...data);
+            // Loop melalui data buku dan buat kartu untuk setiap buku
+            for (let i = 0; i < 50; i++) {
+                const book = booksData[i];
+                const card = document.createElement("div");
+                card.classList.add("card");
 
-            // Bagian depan kartu
-            const front = document.createElement("div");
-            front.classList.add("front");
-            const cover = document.createElement("img");
-            cover.src = book.cover;
-            const title_front = document.createElement("h2");
-            title_front.textContent = book.title;
-            front.appendChild(cover);
-            front.appendChild(title_front);
-            card.appendChild(front);
+                // Bagian depan kartu
+                const front = document.createElement("div");
+                front.classList.add("front");
+                const cover = document.createElement("img");
+                cover.src = book.fields.image_url_m;
+                const title_front = document.createElement("h2");
+                title_front.textContent = book.fields.title;
+                const author = document.createElement("h2");
+                author.textContent = book.fields.author;
+                const id_book = document.createElement("h2");
+                id_book.textContent = `ID : ${book.pk}`;
+                front.appendChild(cover);
+                front.appendChild(title_front);
+                front.appendChild(author);
+                front.appendChild(id_book);
+                card.appendChild(front);
 
-            // Bagian belakang kartu
-            const back = document.createElement("div");
-            back.classList.add("back");
-            const title = document.createElement("h2");
-            title.textContent = `Title: ${book.title}`;
-            const rating = document.createElement("p");
-            rating.textContent = `Rating: ${book.rating}`;
-            const price = document.createElement("p");
-            price.textContent = `Price: ${book.price}`;
-            const description = document.createElement("p");
-            description.textContent = `Description: ${book.description}`;
-            back.appendChild(title);
-            back.appendChild(rating);
-            back.appendChild(price);
-            back.appendChild(description);
-            card.appendChild(back);
+                bookContainer.appendChild(card);
+                }; 
+            }catch (error) {
+            console.error("Faild to get the books:", error);
+        }
+        }
+        fetchBooks();
 
-            card.addEventListener("mouseenter", () => {
-                back.style.display = "block"; // Tampilkan bagian belakang kartu
-            });
-
-            card.addEventListener("mouseleave", () => {
-                back.style.display = "none"; // Sembunyikan bagian belakang kartu
-            });
-
-            bookContainer.appendChild(card);
+        document.getElementById("button_add").addEventListener("click", function() {
+            // console.log("test");
+        fetch("{% url 'main:add_checkout_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        })
+       
+        document.getElementById("form").reset();
         });
+
+        document.getElementById("checkoutButton").addEventListener("click", function() {
+        updateCheckoutList();
+        });
+        async function updateCheckoutList() {
+        fetch("{% url 'main:see_checkout_ajax' %}")
+        // console.log("test");
+        .then(response => response.json())
+        .then(data => {
+            // Data adalah daftar buku yang ada di Checkout
+            const checkoutList = document.getElementById("checkoutList");
+            innerHTML = ""; // Hapus konten Checkout sebelumnya
+            checkoutList.innerHTML=innerHTML; 
+
+            // console.log(data);
+            data.checkout_books.forEach(book => {
+                // console.log(book);
+            const bookId = book.id
+            console.log(bookId);
+            const bookTitle = book.title
+            const bookInfo = document.createElement("p")
+            if (data.user.tipe === 'Wizard') {
+            bookInfo.style.backgroundColor = 'red'
+            } else {
+            bookInfo.style.backgroundColor = 'purple'
+            }
+            bookInfo.textContent = `ID: ${bookId} - ${bookTitle}`;
+            checkoutList.appendChild(bookInfo)
+
+            })
+
+        });
+         
+
+        }
     </script>
 </body>
+{% endblock content %}
 </html>
+
 

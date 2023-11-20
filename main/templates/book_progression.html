@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Book Progression</title>
+{% endblock meta %}
+
+{% block content %}
+<style>
+    .book-progress {
+        background-color: #aaaaaa;
+        color: white;
+        border-radius: 10px;
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;   
+        text-align: center;
+        align-items: center;
+    }
+    
+    .progress-table {
+        background-color: white;
+        color: black;
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .image-column {
+        width: 20%;
+        vertical-align: middle;
+    }
+    
+    .title-column {
+        width: 20%;
+        vertical-align: middle;
+    }
+    
+    td.title-column {
+        text-align: left;
+        vertical-align: middle; 
+    }
+
+    td {
+        vertical-align: middle;
+    }
+
+    .progress-bar-column {
+        width: 30%;
+        vertical-align: middle;
+    }
+    
+    .progress-column {
+        width: 15%;
+        vertical-align: middle;
+    }
+
+    .review-column {
+        width: 15%;
+        vertical-align: middle;
+    }
+
+    #reviewModal, #newBookModal {
+        color: black;
+    }
+
+    #reviewModal .modal-body,
+    #newBookModal .modal-body{
+        text-align: left;
+    }
+
+    
+    h3 {
+        width: 100%;
+        padding: 7px;
+        margin: 0px;
+        text-align: left;
+    }
+
+    #searchBar {
+        width: 100%;
+    }
+
+    #addBookButton {
+        height: 100%;
+    }
+    .col-md-2, .col-md-4,
+    .col-md-6 {
+        display: flex;
+        align-items: center;
+    }
+    
+    .book-progress-title {
+        justify-content: left;
+    }
+
+    .book-progress-search {
+        justify-content: right;
+    }
+    </style>
+
+<div class="book-progress">
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col-md-6 col-sm-12 mb-2 book-progress-title">
+                <h3>Book Progression</h3>
+            </div>
+            <div class="col-md-4 col-sm-12 mb-2 book-progress-search">
+                <input type="search" id="searchBar" class="form-control" placeholder="Search">
+            </div>
+            <div class="col-md-2 col-sm-12 mb-2">
+                <button type="button" id="addBookButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newBookModal">Add New Book</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table progress-table table-striped">
+                <thead id="progressTableHeader">
+                    <tr>
+                        <th class="image-column">Image</th>
+                        <th class="title-column">Book Title</th>
+                        <th class="progress-bar-column">Progress Bar</th>
+                        <th class="progress-column">Progress</th>
+                        <th class="review-column">Review</th>
+                    </tr>
+                </thead>
+                <tbody id="progressTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Review</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="reviewForm" onsubmit="return false">
+                        {% csrf_token %}
+                        <input type="hidden" id="userId" name="user_id">
+                        <div class="mb-3">
+                            <label for="rating" class="col-form-label">Rating:</label>
+                            <select name="rating" id="rating">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="col-form-label">Review:</label>
+                            <input type="text" class="form-control" id="review" name="review"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="reviewCloseButton">Close</button>
+                    <button type="button" class="btn btn-secondary" id="editReviewButton">Edit</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="reviewSaveButton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="newBookModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New book progress</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="newBookForm" onsubmit="return false">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="newBook" class="col-form-label">Book ID:</label>
+                            <input type="text" class="form-control" id="newBook" name="newBook"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="newBookCloseButton">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="newBookSaveButton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function getProgress() {
+        return fetch("{% url 'main:get_reading_progress' %}").then((res) => res.json());
+    }
+
+    async function refreshProgress(filterValue = '') {
+        document.getElementById("progressTableBody").innerHTML = "";
+        const progresses = await getProgress();
+        let htmlString = ``;
+        let matchingBookFound = false;
+        if (progresses.length < 1) {
+            htmlString += `<tr>
+                                <td class="progress-column" colspan="5">You haven't made any reading progress</td>
+                            </tr>`;
+            document.getElementById("progressTableBody").innerHTML = htmlString;
+        } else {
+            progresses.forEach((progress) => {
+                if (filterValue === '' || progress.fields.title.toLowerCase().includes(filterValue.toLowerCase())) {
+                    matchingBookFound = true;
+                    htmlString += `<tr>
+                                    <td><img src="${progress.fields.image}"></td>
+                                    <td>${progress.fields.title}</td>
+                                    <td>
+                                        <div class="progress" role="progressbar">
+                                            <div class="progress-bar" style="width: ${(progress.fields.progress / progress.fields.pages) * 100}%"></div>
+                                        </div>
+                                    </td>
+                                    <td>${progress.fields.progress}/${progress.fields.pages}
+                                        <button type="button" class="btn btn-primary rounded-circle p-0 lh-1" onclick="incrementProgress(${progress.pk})">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary edit-button" data-bs-toggle="modal" data-bs-target="#reviewModal" data-id="${progress.pk}">
+                                            Review
+                                        </button>
+                                    </td>
+                                </tr>`;
+                }
+            });
+            if (matchingBookFound) {
+                document.getElementById("progressTableBody").innerHTML = htmlString;
+            } else {
+                htmlString += `<tr>
+                                <td class="progress-column" colspan="5">No matching book</td>
+                            </tr>`;
+                document.getElementById("progressTableBody").innerHTML = htmlString;
+            }
+        }
+        reviewButtonHandler();
+    }
+
+    refreshProgress();
+
+    document.getElementById("searchBar").addEventListener('input', function (event) {
+        const filterValue = event.target.value;
+        refreshProgress(filterValue);
+    });
+
+    async function reviewButtonHandler() {
+        document.querySelectorAll(".edit-button").forEach(button => {
+            button.addEventListener('click', async function () {
+                CheckEditability();
+                const progressId = button.getAttribute('data-id')
+                document.getElementById("reviewSaveButton").setAttribute('data-id', progressId)
+                await fetch("{% url 'main:get_reading_progress_by_id' 0 %}".replace('0', progressId), {
+                    method: 'GET'
+                }).then((res) => res.json())
+                .then(data => {
+                    data = JSON.parse(data);
+                    document.getElementById("rating").value = data[0].fields.rating;
+                    document.getElementById('review').value = data[0].fields.review;
+                })
+            })
+        })
+    }
+
+    document.getElementById("reviewSaveButton").addEventListener('click', async function () {
+        const progressId = this.getAttribute('data-id');
+        const selectedRating = document.getElementById('rating').value;
+        const formData = new FormData(document.querySelector("#reviewForm"));
+        formData.append('rating', selectedRating);
+        await fetch("{% url 'main:add_review' 0 %}".replace('0', progressId), {
+            method: 'POST',
+            body: formData
+        });
+
+        refreshProgress();
+    });
+
+    document.getElementById("newBookSaveButton").addEventListener('click', async function () {
+        await fetch("{% url 'main:add_progression' %}", {
+            method: 'POST',
+            body: new FormData(document.querySelector("#newBookForm"))
+        });
+
+        resetBookModal();
+        refreshProgress();
+    })
+
+    
+    async function incrementProgress(id) {
+        await fetch("{% url 'main:increment_progress' 0 %}".replace('0', id), {
+            method: "POST",
+        });
+
+        refreshProgress();
+        return false;
+    }
+
+    function resetBookModal() {
+        document.getElementById("newBookForm").reset();
+    }
+    
+    function toggleEditability() {
+        const select = document.getElementById('rating');
+        const input = document.getElementById('review');
+        
+        select.disabled = !select.disabled;
+        input.disabled = !input.disabled;
+    }
+    
+    function CheckEditability() {
+        const select = document.getElementById('rating');
+        if(!select.disabled) {
+            toggleEditability();
+        }
+    }
+
+    document.getElementById("newBookCloseButton").onclick = resetBookModal;
+    document.getElementById("editReviewButton").onclick = toggleEditability;
+</script>
+{% endblock content %}

@@ -6,81 +6,137 @@
 
 {% block content %} 
 <style>
+    body{
+        background-image: linear-gradient(to top, #151F54, #2b2997, #726fff);
+    }
     .register{
-        border: 2px solid red;
         width: 100%;
         padding: 1%;
-        background-color: #6704f1;
         border-radius: 10px;
     }
     .title-choose{
         text-align: center;
         color: white;
-        border: 2px solid blue;
+        border-radius: 10px;
     }
     .container-left{
-        border: 2px solid green;
-        width: 50%;
+        width: 100%;
         padding: 1%;
         float: left;
-        height: 200px;
+        height: 50rem;
+        transition: all 1.2s;
+        margin-top: 90px;
+        margin-bottom: 90px;
+    }
+    .container-left:hover{
+        transform: scale(1.03);
     }
     .container-right{
-        border: 2px solid yellow;
-        width: 50%;
+        width: 100%;
         padding: 1%;
         float: right;
-        height: 200px;
+        height: 50rem;
+        transition:  all 1.2s;
+        margin-top: 90px;
+        margin-bottom: 90px;
+    }
+    .container-right:hover{
+        transform: scale(1.03);
     }
     .container-left-inside{
-        border: 2px solid purple;
         width: 100%;
         text-align: center;
         transition: 0s;
         height: 100%;
-        background-color:#4702a7;
-        border-radius: 10px;
+        border-radius: 100px;
+        margin-left: 20px;
+        background-color: rgba(6, 11, 41, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
     }
     .container-left-inside:hover{
-        background-image: url(https://cdn.oneesports.id/cdn-data/sites/2/2022/08/Updatee-Genshin-Impact-versi-3.0-1.jpg);
+        background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/c665c571186845.5bbcda433302b.jpg);
         background-size: cover;
     }
     .container-right-inside{
-        border: 2px solid orange;
         width: 100%;
         text-align: center;
         transition: 0s;
         height: 100%;
-        background-color:#4702a7;
-        border-radius: 10px;
+        border-radius: 100px;
+        margin-left: 20px;
+        background-color: rgba(6, 11, 41, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0;
     }
 
     .container-right-inside:hover{
-        background-image: url(https://oyster.ignimgs.com/mediawiki/apis.ign.com/genshin-impact/2/24/Key_art_EN.png);
+        background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/bd91ce71186845.5bbcda4334bbb.jpg);
         background-size: cover;
     }
+    .form-group{
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+    .form-select{
+        margin-top: 1%;
+        margin-bottom: 1%;
+    }
+    .form-control{
+        margin-top: 1%;
+        margin-bottom: 1%;
+    }
+
+    h1{
+        text-align: center;
+        justify-content: center;
+        font-weight: bold;
+
+    }
+
+    h2 {
+            color:#ffffff;
+            font-size: 50px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+    .hidden {
+    display: none;
+}
 </style> 
 
 <body>   
-    <div class = "register d-flex flex-column">
-        <h1 class="title-choose">Choose A Side</h1>
-        <div class="container-outer">
-            <div class="container-left">
-                <div class="container-left-inside">
-                    <h1 class="text-wizard" style="color:white">Wizard</h1>
+
+    
+    <div class="container-xl register d-flex flex-column">
+        <h2 class="title-choose">Choose A Side</h2>
+        <div class="row container-outer">
+            <div class="col-12 col-lg-6">
+                <div class="container-left" id="container-left">
+                    <div class="container-left-inside">
+                        <h1 class="text-wizard hidden" style="color:white">Wizard</h1>
+                    </div>
                 </div>
             </div>
-            <div class="container-right">
-                <div class="container-right-inside">
-                    <h1 style="color:white">Muggle</h1>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
+            <div class="col-12 col-lg-6">
+                <div class="container-right" id="container-right">
+                    <div class="container-right-inside">
+                        <h1 style="color:white" class="hidden">Muggle</h1>
+                    </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 
-    <!-- Modal untuk Wizard -->
-    <div class="modal fade wizard" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal untuk Muggle -->
+    <div class="modal fade wizard" id="modal-wizard" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -91,14 +147,20 @@
                     <form method="POST" >  
                         {% csrf_token %}  
                         <table>  
-                            {{ form.as_table }} 
-                            {{ form_person.as_table }}
+                            {{ form.username }}
+                            {{ form.password1 }}
+                            {{ form.password2 }}
+                            {{ form_person_wizard.name }}
+                            {{ form_person_wizard.email }}
+                            {{ form_person_wizard.tipe }}
+                            {{ form_person_wizard.gender }}
                             <tr>  
                                 <td></td>
-                                <td><input type="submit" name="submit" value="Daftar"/></td>  
+                                <td><input class="btn btn-primary" type="submit" name="submit" value="Daftar"/></td>  
                             </tr>   
                         </table>    
                     </form>
+                    {{ form.errors }}
                     {% if messages %}  
                         <ul>   
                             {% for message in messages %}  
@@ -111,12 +173,90 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $("#button_add").click(function() {
-                $("form").submit(); // Submit the form when the button is clicked
+    <!-- Modal untuk Wizard -->
+    <div class="modal fade wizard" id="modal-muggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Register</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" >  
+                        {% csrf_token %}  
+                        <table>  
+                    
+                            <div class="form-group">
+                                {{ form.username }}
+                                {{ form.password1 }}
+                                {{ form.password2 }}
+                                {{ form_person_muggle.name }}
+                                {{ form_person_muggle.email }}
+                                {{ form_person_muggle.tipe }}
+                                {{ form_person_muggle.gender }}
+                            </div>
+                            <tr>  
+                                <td></td>
+                                <td><input class="btn btn-primary" type="submit" name="submit" value="Daftar"/></td>  
+                            </tr>   
+                        </table>    
+                    </form>
+                    {{ form.errors }}
+                    {% if messages %}  
+                        <ul>   
+                            {% for message in messages %}  
+                                <p>{{ message }}</p>  
+                            {% endfor %}  
+                        </ul>   
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var showModalBtn = document.getElementById("container-left");
+            var myModal = new bootstrap.Modal(document.getElementById("modal-wizard"));
+
+            showModalBtn.addEventListener("click", function () {
+                myModal.show();
             });
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var showModalBtn = document.getElementById("container-right");
+            var myModal = new bootstrap.Modal(document.getElementById("modal-muggle"));
+
+            showModalBtn.addEventListener("click", function () {
+                myModal.show();
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        var wizardText = document.querySelector(".text-wizard");
+        var muggleText = document.querySelector(".container-right-inside h1");
+
+        var showModalBtnWizard = document.getElementById("container-left");
+        var showModalBtnMuggle = document.getElementById("container-right");
+
+        showModalBtnWizard.addEventListener("mouseover", function () {
+            wizardText.classList.add("hidden");
+        });
+
+        showModalBtnWizard.addEventListener("mouseout", function () {
+            wizardText.classList.remove("hidden");
+        });
+
+        showModalBtnMuggle.addEventListener("mouseover", function () {
+            muggleText.classList.add("hidden");
+        });
+
+        showModalBtnMuggle.addEventListener("mouseout", function () {
+            muggleText.classList.remove("hidden");
+        });
+    });
+        
     </script>
 </body>
 {% endblock content %}
