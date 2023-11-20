@@ -136,9 +136,18 @@
     </div>
 
     <div class="main-container container">
+        {% if messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <h1>RavenReads</h1>
         <h2>Step into the magical realm of RavenReads,</h2>
         <h2>where books are not mere objects, but portals to different dimensions!</h2>
     </div>
+
 </body>
 </html>
