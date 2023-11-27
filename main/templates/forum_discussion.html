@@ -262,8 +262,7 @@
     const mainThreadsMuggle = await getMainThreadsMuggle()
     
     
-    
-    
+  
     let htmlString = await Promise.all(mainThreadsWizard.map(async (thread) => {
       const personNames = await getPersonName(thread.fields.person);
       console.log(personNames)
@@ -316,26 +315,28 @@
       document.getElementById("main-thread-ajax").innerHTML = ""
       const mainFilteredThread = await getFilteredThreads(ID)
 
-      let htmlString = ``
+      let htmlString = await Promise.all(mainFilteredThread.map(async (thread) => {
+        const personNames = await getPersonName(thread.fields.person);
+        console.log(personNames)
+        // Membentuk HTML string
+        return `
+          <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(${thread.pk})">
+            <div class="row g-0 justify-content-center">
+              <div class="col-md-4">
+                <img src="https://img.icons8.com/?size=128&id=rZIbtkyaUTIy&format=png&color=FFc82b" class="card-img-top mx-auto d-block"alt="...">
 
-      mainFilteredThread.forEach((thread) => {
-          htmlString += `\n
-            <div class="card card-clickable mb-3" id="card-wizard" onclick="openThread(${ thread.pk })">
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="..." class="img-fluid rounded-start" alt="...">
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title">${ thread.fields.title}</h5>
-                    <p class="card-text">Poster by : ${ thread.fields.person}</p>
-                    <p class="card-text"><small class="text-body-secondary">Posted at ${ thread.fields.date_created}</small></p>
-                  </div>
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">${thread.fields.title}</h5>
+                  <p class="card-text">Posted by : ${personNames[0].fields.name}</p>
+                  <p class="card-text"><small class="text-body-secondary">Posted at ${thread.fields.date_created}</small></p>
                 </div>
               </div>
             </div>
-          ` 
-        })    
+          </div>
+        `;
+        }));
     document.getElementById("main-thread-ajax").innerHTML = htmlString
     }
 
