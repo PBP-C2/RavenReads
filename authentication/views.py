@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+@csrf_exempt
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
@@ -50,6 +51,7 @@ def logout(request):
         "message": "Logout gagal."
         }, status=401)
 
+@csrf_exempt
 def register(request):
     if request.method == "POST":
         username = request.POST.get('username')

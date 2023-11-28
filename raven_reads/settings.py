@@ -65,7 +65,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
-CSRF_TRUSTED_ORIGINS =  ["https://ravenreads-c02-tk.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS =  ["https://ravenreads-c02-tk.pbp.cs.ui.ac.id", "http://localhost:56488"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
