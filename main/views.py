@@ -435,3 +435,47 @@ def quiz_results(request):
     
 def show_about(request):
     return render(request, "about.html")
+
+
+@csrf_exempt
+def create_main_discussion_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        print(data)
+        new_product = MainThread.objects.create(
+            
+            person = Person.objects.get(user=User.objects.get(pk=data["id"])),
+            title = data["title"],
+            content = data["content"],
+            thread_count = 0,
+            date_created = datetime.datetime.now(),
+            date_updated = datetime.datetime.now(),
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+
+@csrf_exempt
+def reply_discussion_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        print(data)
+        new_product = Thread.objects.create(
+            person = Person.objects.get(user=User.objects.get(pk=data["user_id"])),
+            main_thread = MainThread.objects.get(pk=data["main_thread_id"]),
+            content = data["content"],
+            date_created = datetime.datetime.now(),
+            date_updated = datetime.datetime.now(),
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
