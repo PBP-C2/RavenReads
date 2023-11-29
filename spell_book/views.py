@@ -20,7 +20,8 @@ def main_page(request):
             scroll.save()
 
             return redirect('spell_book:main_page')
-        
+    
+    # Dapetin session (Cookie)
     recent = None
     if 'recently_made' in request.session:
         recent = Scroll.objects.filter(pk__in=request.session['recently_made'])

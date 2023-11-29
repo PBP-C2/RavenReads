@@ -23,4 +23,5 @@ urlpatterns = [
     path("spell_book/", include("spell_book.urls")),
     path("whole_scroll/", include("whole_scroll.urls")),
     path('', include('main.urls')),
+    path('auth/', include('authentication.urls')),
 ]

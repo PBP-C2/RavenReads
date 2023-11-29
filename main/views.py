@@ -344,6 +344,7 @@ def book_progression(request):
     person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":
         return render(request, 'book_progression.html')
+    messages.error(request, 'You are not authorized to access this page.')
     return HttpResponseRedirect(reverse('main:show_main'))
 
 def get_reading_progress(request):

@@ -8,5 +8,3 @@ class Scroll(models.Model):
     title = models.CharField(max_length=200)
     image_url = models.CharField(max_length=200)
     content = models.TextField(max_length=5000)
-
-
