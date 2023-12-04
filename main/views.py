@@ -479,3 +479,24 @@ def reply_discussion_flutter(request):
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def post_quiz_points_flutter(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        total_points = data["points"]
+        user = request.user
+        if user.is_authenticated:
+            quiz_point, created = QuizPoint.objects.get_or_create(user=user)
+            quiz_point.points = total_points
+            quiz_point.save()
+        return JsonResponse({
+            "status": True,
+            "message": "points assigned",
+            "points": total_points
+        }, status=200)
+    
+    return JsonResponse({
+        "status": False,
+        "message": "Fail assign points"
+    }, status=405)
