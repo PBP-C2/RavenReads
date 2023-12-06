@@ -500,3 +500,19 @@ def post_quiz_points_flutter(request):
         "status": False,
         "message": "Fail assign points"
     }, status=405)
+
+@csrf_exempt
+def get_person_name_flutter(request, id):
+    # person = Person.objects.all()
+    # return HttpResponse(serializers.serialize('json', person))
+
+    person = Person.objects.get(pk=id)
+    return JsonResponse({
+        "status": True,
+        "name": person.name
+    }, status=200)
+    
+    # return JsonResponse({
+    #     "status": False,
+    #     "message": "Fail get name"
+    # }, status=405)
