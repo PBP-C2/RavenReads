@@ -58,13 +58,25 @@ def register(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-
-        new_user = Person.objects.create_user(username=username, password=password)
-            
+        type = request.POST.get('type')
+        type = "Wizard"
+        email = request.POST.get('email')
+        gender = request.POST.get('gender')
+        gender = "Male"
+        
+        new_user = User.objects.create_user(username=username, password=password)
+        
+        new_Person = Person.objects.create(
+            user=new_user, 
+            name=username,
+            email=email,
+            tipe=type,
+            gender=gender)
+        
         return JsonResponse({
             "status": True,
             "message": "Account created successfully!",
-            "user_id": new_user.id 
+            "user_id": new_Person.id 
         }, status=200)
     
     return JsonResponse({
