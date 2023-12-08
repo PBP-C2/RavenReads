@@ -59,11 +59,8 @@ def register(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         type = request.POST.get('type')
-        type = "Wizard"
         email = request.POST.get('email')
         gender = request.POST.get('gender')
-        gender = "Male"
-        
         new_user = User.objects.create_user(username=username, password=password)
         
         new_Person = Person.objects.create(
