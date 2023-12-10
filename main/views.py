@@ -339,7 +339,7 @@ def see_checkout_ajax(request):
    
 
 
-# @login_required(login_url='/login')
+@login_required(login_url='/login')
 def book_progression(request):
     person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":
@@ -365,7 +365,7 @@ def increment_progress(request, id):
         if current_progress.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
-        return HttpResponse(b"OK", status=200)
+        return JsonResponse({"status": "success"}, status=200)
     
     return HttpResponseNotFound()
 
@@ -374,10 +374,11 @@ def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
         current_progress = progress.get(pk=id)
-        current_progress.rating = request.POST.get("rating")
-        current_progress.review = request.POST.get("review")
+        data = json.loads(request.body)
+        current_progress.rating = int(data.get("rating"))
+        current_progress.review = data.get("review")
         current_progress.save()
-        return HttpResponse(b"OK", status=200)
+        return JsonResponse({"status": "success"}, status=200)
     
     return HttpResponseNotFound()
 
@@ -385,18 +386,19 @@ def add_review(request, id):
 def add_progression(request):
     if request.method == 'POST':
         user = request.user
-        bookId = request.POST.get("newBook")
+        data = json.loads(request.body)
+        bookId = data.get("newBook")
         book = Bk.objects.get(pk = bookId)
         existing_progress = ReadingProgress.objects.filter(user=user, book=book).first()
         if existing_progress:
-            return HttpResponse(b"Duplicate entry - This book is already in progress for this user", status=400)
+            return JsonResponse({"status": "error"}, status=409)
         else:
             title = book.title
             image = book.image_url_s
             pages = random.randint(100, 999)
             new_progress = ReadingProgress(user=user, book=book, title=title, image=image, pages=pages)
             new_progress.save()
-            return HttpResponse(b"CREATED", status=201)
+            return JsonResponse({"status": "success"}, status=200)
 
     return HttpResponseNotFound()
 
