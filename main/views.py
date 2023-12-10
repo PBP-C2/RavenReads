@@ -141,6 +141,10 @@ def forum_discussion(request):
     }
     return render(request, 'forum_discussion.html', context)
 
+def get_main_thread_by_id(request, id):
+    main_thread = MainThread.objects.get(pk=id)
+    return HttpResponse(serializers.serialize('json', [main_thread]))
+
 def make_thread(request):
     form = MainThreadForm()
 
