@@ -8,9 +8,9 @@ from main.views import (add_checkout_ajax, book_progression, book_store,
                         get_main_thread_wizard_json, get_reading_progress,
                         get_thread_json, login_user, logout_user, magic_quiz,
                         make_thread, new_main_thread_ajax, new_thread_ajax, open_main_thread,
-                        register, reply, see_checkout_ajax, show_main)
+                        register, reply, see_checkout_ajax, show_main, create_main_discussion_flutter, reply_discussion_flutter, get_person_name_flutter)
 from main.views import (book_progression, book_store, forum_discussion,
-                        get_reading_progress,
+                        get_reading_progress, post_quiz_points_flutter,
                         login_user, logout_user, make_thread, open_main_thread,
                         register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results, show_about, add_progression)
 
@@ -49,5 +49,9 @@ urlpatterns = [
     path('new_thread_ajax/<int:id>', new_thread_ajax, name='new_thread_ajax'),
     path('filter_thread_by_user/<int:id>', filter_thread_by_user, name='filter_thread_by_user'),
     path('get_person_name/<int:id>', get_person_name, name='get_person_name'),
-    path('about/', show_about, name='show_about')
+    path('about/', show_about, name='show_about'),
+    path('create_main_discussion_flutter/', create_main_discussion_flutter, name='create_main_discussion_flutter'),
+    path('reply_discussion_flutter/', reply_discussion_flutter, name='reply_discussion_flutter'),
+    path('post_quiz_points_flutter/', post_quiz_points_flutter, name='post_quiz_points_flutter'),
+    path('get_person_name_flutter/<int:id>', get_person_name_flutter, name='get_person_name_flutter'),
 ]

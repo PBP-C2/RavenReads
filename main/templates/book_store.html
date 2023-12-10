@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block meta %}
     <title>Book Store</title>
@@ -11,7 +12,13 @@
     {% block content %}
 <style>
     body {
+<<<<<<< HEAD
         background-color: #f0f0f0;
+        font-family: 'Poppins', sans-serif;
+=======
+        font-family: 'Poppins', sans-serif;
+        background-color: #00025f;
+>>>>>>> 47d94153fe4946fab9ecb338736f7964b8d7dbee
     }
     .header {
         text-align: left;
@@ -26,13 +33,14 @@
         width: calc(23% - 20px);
         height: 250px;
         margin: 10px;
+        background-color:#FFFAF0;
         perspective: 1000px;
         text-align: center;
         margin-top: 10px;
         border : none;
-        display: flex; /* Menjadikan card elemen berbasis flex */
-        flex-direction: column; /* Mengatur tata letak kolom */
-        align-items: center; /* Menyusun elemen secara tengah */
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
         justify-content: center;
     }
     
@@ -41,43 +49,47 @@
         height: 100%;
         position: absolute;
         backface-visibility: hidden;
-        display: flex; /* Menjadikan card elemen berbasis flex */
-        flex-direction: column; /* Mengatur tata letak kolom */
-        align-items: center; /* Menyusun elemen secara tengah */
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
         justify-content: center;
     }
 
-    .front p {
-    margin-top: 5px; /* Menambahkan jarak antara judul dan ID */
-    font-size: 12px;
-    }
     .card img {
-        max-width: 60%;
-        max-height: 60%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
-        margin-top : 1px;
+        margin-top : 0.5px;
     }
     .card h2 {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: bold;
-        margin-top: 2px; /* Atur spasi antara judul dan elemen di atasnya */
-        margin-bottom: 3px;
+        margin-top: 0.125px; 
+        margin-bottom: 2px;
     }
     .card p {
         font-size: 10px;
-        margin-top: 2px; /* Atur spasi antara judul dan elemen di atasnya */
+        margin-top: 1px; 
+        font-weight: bold;
         margin-bottom: 1px;
+        color : #808080
     }
 
-
-    #checkoutButton, #addBookButton{
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        float : right;
-        margin-top: 0;
-        margin-bottom: 0;  
+    #checkoutButton, #addBookButton {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    margin-top: 0;
+    margin-bottom: 0;
+    justify-content: center; 
+    align-items: center;
+    background-color: #00025f;
+    color: #FFFAF0;
+    font-size: 14px;
+    width: 100px; 
+    height: 75px; 
+    padding: 5px 10px; 
     }
 
     #addBookButton {
@@ -93,13 +105,13 @@
     }
 
     .header {
-
+        border : none;
         grid-template-columns: auto 1fr;
         justify-content: space-between;
         align-items: center;
         padding: 30px;
-        background-color: black;
-        color: white;
+        background-color: #726fff;
+        color: 	#FFF8DC;
         display: flex;
 
     }
@@ -113,6 +125,8 @@
         display: flex;
         justify-content: left;
         align-items: center;
+        color: #00025f;
+        font-weight: bold;
     }
 
     .search-bar {
@@ -122,21 +136,7 @@
         margin-left: 20px;
     }
 
-    .search-bar input[type="text"] {
-        display: flex;
-        width: 400px; 
-        padding: 30px;
-    }
-
-    .search-bar button {
-        display: flex;
-        padding: 5px 10px;
-        background-color: white;
-        color: black;
-        border: none;
-        cursor: pointer;
-        margin-left: 10px;
-    }
+    
 </style>
 <body>
     <div class="header">
@@ -163,7 +163,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="addModalLabel">Add New Product</h1>
+                        <h1 class="modal-title fs-5" id="addModalLabel" style="color: black;">Add Your Best Book</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -176,7 +176,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="search-bar button" id="button_add" data-bs-dismiss="modal">Add</button>
+                        <button type="button" class="search-bar button" id="button_add" data-bs-dismiss="modal" style="border: none ;background-color: black ;color : white">Add</button>
                     </div>
                 </div>
             </div>
@@ -190,7 +190,7 @@
                     <button id="addBookButton" data-bs-toggle="modal" data-bs-target="#addModal" >Add Book to Checkout</button>
                     </div>
                     <div class="col">
-                    <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2">See The Checkout</button>
+                    <button id="checkoutButton" data-bs-toggle="modal" data-bs-target="#addModal2">Checkout Details</button>
                     </div>
 
                 </div>
@@ -213,7 +213,7 @@
             const data = await response.json();
             booksData.push(...data);
             // Loop melalui data buku dan buat kartu untuk setiap buku
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 250; i++) {
                 const book = booksData[i];
                 const card = document.createElement("div");
                 card.classList.add("card");
@@ -263,7 +263,7 @@
         .then(data => {
             // Data adalah daftar buku yang ada di Checkout
             const checkoutList = document.getElementById("checkoutList");
-            innerHTML = ""; // Hapus konten Checkout sebelumnya
+            innerHTML = ""; 
             checkoutList.innerHTML=innerHTML; 
 
             if (data.checkout_books.length !=0){
@@ -295,5 +295,3 @@
 </body>
 {% endblock content %}
 </html>
-
-

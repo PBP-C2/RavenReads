@@ -344,6 +344,7 @@ def book_progression(request):
     person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":
         return render(request, 'book_progression.html')
+    messages.error(request, 'You are not authorized to access this page.')
     return HttpResponseRedirect(reverse('main:show_main'))
 
 def get_reading_progress(request):
@@ -434,3 +435,84 @@ def quiz_results(request):
     
 def show_about(request):
     return render(request, "about.html")
+
+
+@csrf_exempt
+def create_main_discussion_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        print(data)
+        new_product = MainThread.objects.create(
+            
+            person = Person.objects.get(user=User.objects.get(pk=data["id"])),
+            title = data["title"],
+            content = data["content"],
+            thread_count = 0,
+            date_created = datetime.datetime.now(),
+            date_updated = datetime.datetime.now(),
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+
+@csrf_exempt
+def reply_discussion_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        print(data)
+        new_product = Thread.objects.create(
+            person = Person.objects.get(user=User.objects.get(pk=data["user_id"])),
+            main_thread = MainThread.objects.get(pk=data["main_thread_id"]),
+            content = data["content"],
+            date_created = datetime.datetime.now(),
+            date_updated = datetime.datetime.now(),
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def post_quiz_points_flutter(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        total_points = data["points"]
+        user = request.user
+        if user.is_authenticated:
+            quiz_point, created = QuizPoint.objects.get_or_create(user=user)
+            quiz_point.points = total_points
+            quiz_point.save()
+        return JsonResponse({
+            "status": True,
+            "message": "points assigned",
+            "points": total_points
+        }, status=200)
+    
+    return JsonResponse({
+        "status": False,
+        "message": "Fail assign points"
+    }, status=405)
+
+@csrf_exempt
+def get_person_name_flutter(request, id):
+    # person = Person.objects.all()
+    # return HttpResponse(serializers.serialize('json', person))
+
+    person = Person.objects.get(pk=id)
+    return JsonResponse({
+        "status": True,
+        "name": person.name
+    }, status=200)
+    
+    # return JsonResponse({
+    #     "status": False,
+    #     "message": "Fail get name"
+    # }, status=405)
