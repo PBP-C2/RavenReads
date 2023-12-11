@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from spell_book.models import Scroll
 from main.models import Person
@@ -6,6 +7,8 @@ from django.shortcuts import redirect
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
@@ -69,3 +72,22 @@ def new_scroll_ajax(request):
 def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Scroll.objects.create(
+            user = request.user,
+            name = data["name"],
+            price = int(data["price"]),
+            description = data["description"]
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
