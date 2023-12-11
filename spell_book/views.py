@@ -7,6 +7,8 @@ from django.shortcuts import redirect
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
@@ -70,5 +72,4 @@ def new_scroll_ajax(request):
 def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
-
 
