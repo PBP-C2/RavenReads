@@ -12,7 +12,7 @@ from main.views import (add_checkout_ajax, book_progression, book_store,
 from main.views import (book_progression, book_store, forum_discussion,
                         get_reading_progress, post_quiz_points_flutter,
                         login_user, logout_user, make_thread, open_main_thread,
-                        register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results, show_about, add_progression)
+                        register, reply, show_main, increment_progress, add_review, get_reading_progress_by_id, magic_quiz, quiz_points, quiz_results, show_about, add_progression, get_person_type)
 
 app_name = 'main'
 
@@ -30,6 +30,7 @@ urlpatterns = [
     path('new_main_thread_ajax/', new_main_thread_ajax, name='new_main_thread_ajax'),
     path('get_thread_json/<int:id>', get_thread_json, name='get_thread_json'),
     path('book-progression/', book_progression, name='book_progression'),
+    path('get-person-type/', get_person_type, name='get_person_type'),
     path('get-progression/', get_reading_progress, name='get_reading_progress'),
     path('get-progression/<int:id>/', get_reading_progress_by_id, name='get_reading_progress_by_id'),
     path('increment-progress/<int:id>/', increment_progress, name='increment_progress'),
