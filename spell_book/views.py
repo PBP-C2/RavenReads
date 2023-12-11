@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from spell_book.models import Scroll
 from main.models import Person
@@ -69,3 +70,5 @@ def new_scroll_ajax(request):
 def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
+
+

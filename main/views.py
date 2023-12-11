@@ -1,48 +1,30 @@
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
-from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+import csv
 import datetime
-from main.models import Person, MainThread, Thread
-from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.core import serializers
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import datetime
-import random
 import json
+import random
 
 import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, JsonResponse)
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 
+from book.models import Book as Bk
 from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
 # from main.models import MainThread, Person, ReadingProgress, Thread
 from main.models import (Book, BookStore, Checkout, MainThread, Person,
-                         ReadingProgress, Thread)
-from main.forms import MainThreadForm, PersonForm, ThreadForm
-from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
+                         QuizPoint, ReadingProgress, Thread)
 
-from book.models import Book as Bk
-
-import csv
-from django.shortcuts import render
 from .models import Book
-from django.contrib.auth.models import User
-from django.views.decorators.http import require_GET
+
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -264,6 +246,8 @@ def new_thread_ajax(request, id):
 
 import json
 import os
+
+
 def filter_thread_by_user(request, id):
     thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
     return HttpResponse(serializers.serialize('json', thread))
@@ -516,3 +500,30 @@ def get_person_name_flutter(request, id):
     #     "status": False,
     #     "message": "Fail get name"
     # }, status=405)
+
+
+
+
+def add_book_flutter(request):
+    if request.method == 'POST':
+        book_id = request.POST.get("book_id")
+        book = Book.objects.get(pk=book_id)
+        user = request.user
+
+        new_checkout = Checkout(user=user, book=book)
+        new_checkout.save()
+
+        return JsonResponse({'status': 'success','message':"Checkout added"}, status=201)
+
+    return JsonResponse({'status': 'failed'}, status=400)
+
+
+@csrf_exempt
+def get_book_details(request):
+    user = Person.objects.filter(user =request.user).values().first()
+    
+    checkouts = Checkout.objects.select_related().filter(user=request.user)
+
+    checkout_books = [{'id': checkout.book.pk, 'title': checkout.book.title, 'author':checkout.book.author, 'publisher':checkout.book.publisher} for checkout in checkouts]
+
+    return JsonResponse({'checkout_books': checkout_books, 'user': user, 'status': 'success'})

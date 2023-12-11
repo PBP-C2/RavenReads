@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_wizard_json, new_main_thread_ajax
+from main.views import  add_book_flutter, get_book_details, show_main, login_user, register, forum_discussion, logout_user, make_thread, open_main_thread, reply, get_main_thread_wizard_json, new_main_thread_ajax
 from main.views import get_main_thread_muggle_json, get_thread_json, new_thread_ajax, filter_thread_by_user, get_person_name
 
 from main.views import (add_checkout_ajax, book_progression, book_store,
@@ -54,4 +54,6 @@ urlpatterns = [
     path('reply_discussion_flutter/', reply_discussion_flutter, name='reply_discussion_flutter'),
     path('post_quiz_points_flutter/', post_quiz_points_flutter, name='post_quiz_points_flutter'),
     path('get_person_name_flutter/<int:id>', get_person_name_flutter, name='get_person_name_flutter'),
+    path('add_book_flutter/', add_book_flutter, name='add_book_flutter'),
+    path('get_book_details/', get_book_details, name='get_book_details'),
 ]
