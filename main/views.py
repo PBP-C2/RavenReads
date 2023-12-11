@@ -351,6 +351,10 @@ def book_progression(request):
     messages.error(request, 'You are not authorized to access this page.')
     return HttpResponseRedirect(reverse('main:show_main'))
 
+def get_person_type(request):
+    person = Person.objects.get(user=request.user)
+    return JsonResponse({"status": "success", "type": person.tipe}, status=200)
+
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', progresses))
