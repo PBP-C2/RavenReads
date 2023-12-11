@@ -73,21 +73,3 @@ def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
 
-@csrf_exempt
-def create_product_flutter(request):
-    if request.method == 'POST':
-        
-        data = json.loads(request.body)
-
-        new_product = Scroll.objects.create(
-            user = request.user,
-            name = data["name"],
-            price = int(data["price"]),
-            description = data["description"]
-        )
-
-        new_product.save()
-
-        return JsonResponse({"status": "success"}, status=200)
-    else:
-        return JsonResponse({"status": "error"}, status=401)
