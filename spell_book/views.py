@@ -8,6 +8,8 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseNotFound
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 
 
 # Create your views here.
@@ -73,3 +75,33 @@ def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
 
+<<<<<<< HEAD
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Scroll.objects.create(
+            person = Person.objects.get(user=request.user),
+            title = data["title"],
+            image_url = data["imageurl"],
+            content = data["content"]
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+def show_scroll_data_json(request):
+    scroll_data = [{'person':scroll.person, 'title': scroll.title, 'image_url': scroll.image_url, 'content': scroll.content} for scroll in scrolls]
+
+    return JsonResponse(scroll_data, safe=False)
+    
+def get_product_json(request):
+    product_item = Scroll.objects.all()
+    return HttpResponse(serializers.serialize('json', product_item))
+=======
+>>>>>>> e4358d00909b62aeb3fefa2bd3de3dec3bc22e24
