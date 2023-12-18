@@ -11,5 +11,4 @@ urlpatterns = [
     path('create-flutter/', create_product_flutter, name='create_product_flutter'),
     path('show_scroll_data/', show_scroll_data_json, name='show_scroll_data_json'),
     path('show_scroll/', get_product_json, name='show_scroll'),
-
 ]

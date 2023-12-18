@@ -10,14 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+# import environ 
+import os
 from pathlib import Path
-import environ 
-import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
+# env = environ.Env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,7 +25,7 @@ env = environ.Env()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-v1t$%zx)8-*=%ok)apjm(1be86^0=hp4e=6z0h%x1bh+m)=9cv'
 
-PRODUCTION = env.bool('PRODUCTION', False)
+# PRODUCTION = env.bool('PRODUCTION', False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -70,12 +70,12 @@ CSRF_TRUSTED_ORIGINS =  ["https://ravenreads-c02-tk.pbp.cs.ui.ac.id", "http://lo
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'raven_reads.urls'
@@ -109,11 +109,11 @@ DATABASES = {
     }
 }
 
-if PRODUCTION:
-    DATABASES = {
-        'default': env.db('DATABASE_URL')
-    }
-    DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# if PRODUCTION:
+#     DATABASES = {
+#         'default': env.db('DATABASE_URL')
+#     }
+#     DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

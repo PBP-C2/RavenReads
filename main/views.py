@@ -1,48 +1,30 @@
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
-from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+import csv
 import datetime
-from main.models import Person, MainThread, Thread
-from main.forms import PersonForm, MainThreadForm, ThreadForm, UserForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.core import serializers
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import datetime
-import random
 import json
+import random
 
 import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, JsonResponse)
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 
+from book.models import Book as Bk
 from main.forms import MainThreadForm, PersonForm, ThreadForm, UserForm
 # from main.models import MainThread, Person, ReadingProgress, Thread
 from main.models import (Book, BookStore, Checkout, MainThread, Person,
-                         ReadingProgress, Thread)
-from main.forms import MainThreadForm, PersonForm, ThreadForm
-from main.models import Book, MainThread, Person, ReadingProgress, Thread, QuizPoint
+                         QuizPoint, ReadingProgress, Thread)
 
-from book.models import Book as Bk
-
-import csv
-from django.shortcuts import render
 from .models import Book
-from django.contrib.auth.models import User
-from django.views.decorators.http import require_GET
+
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -268,6 +250,8 @@ def new_thread_ajax(request, id):
 
 import json
 import os
+
+
 def filter_thread_by_user(request, id):
     thread = MainThread.objects.filter(person=Person.objects.get(pk=id))
     return HttpResponse(serializers.serialize('json', thread))
@@ -343,13 +327,17 @@ def see_checkout_ajax(request):
    
 
 
-# @login_required(login_url='/login')
+@login_required(login_url='/login')
 def book_progression(request):
     person = Person.objects.get(user=request.user)
     if person.tipe == "Wizard":
         return render(request, 'book_progression.html')
     messages.error(request, 'You are not authorized to access this page.')
     return HttpResponseRedirect(reverse('main:show_main'))
+
+def get_person_type(request):
+    person = Person.objects.get(user=request.user)
+    return JsonResponse({"status": "success", "type": person.tipe}, status=200)
 
 def get_reading_progress(request):
     progresses = ReadingProgress.objects.filter(user=request.user)
@@ -369,7 +357,7 @@ def increment_progress(request, id):
         if current_progress.pages > current_progress.progress:
             current_progress.progress += 1
             current_progress.save()
-        return HttpResponse(b"OK", status=200)
+        return JsonResponse({"status": "success"}, status=200)
     
     return HttpResponseNotFound()
 
@@ -378,10 +366,11 @@ def add_review(request, id):
     if request.method == 'POST':
         progress = ReadingProgress.objects.filter(user=request.user)
         current_progress = progress.get(pk=id)
-        current_progress.rating = request.POST.get("rating")
-        current_progress.review = request.POST.get("review")
+        data = json.loads(request.body)
+        current_progress.rating = int(data.get("rating"))
+        current_progress.review = data.get("review")
         current_progress.save()
-        return HttpResponse(b"OK", status=200)
+        return JsonResponse({"status": "success"}, status=200)
     
     return HttpResponseNotFound()
 
@@ -389,18 +378,19 @@ def add_review(request, id):
 def add_progression(request):
     if request.method == 'POST':
         user = request.user
-        bookId = request.POST.get("newBook")
+        data = json.loads(request.body)
+        bookId = data.get("newBook")
         book = Bk.objects.get(pk = bookId)
         existing_progress = ReadingProgress.objects.filter(user=user, book=book).first()
         if existing_progress:
-            return HttpResponse(b"Duplicate entry - This book is already in progress for this user", status=400)
+            return JsonResponse({"status": "error"}, status=409)
         else:
             title = book.title
             image = book.image_url_s
             pages = random.randint(100, 999)
             new_progress = ReadingProgress(user=user, book=book, title=title, image=image, pages=pages)
             new_progress.save()
-            return HttpResponse(b"CREATED", status=201)
+            return JsonResponse({"status": "success"}, status=200)
 
     return HttpResponseNotFound()
 
@@ -520,3 +510,31 @@ def get_person_name_flutter(request, id):
     #     "status": False,
     #     "message": "Fail get name"
     # }, status=405)
+
+
+
+
+def add_book_flutter(request):
+    if request.method == 'POST':
+        book_id = request.POST.get("book_id")
+        book = Book.objects.get(pk=book_id)
+        user = request.user
+        # print(user)
+
+        new_checkout = Checkout(user=user, book=book)
+        new_checkout.save()
+
+        return JsonResponse({'status': 'success','message':"Checkout added"}, status=201)
+
+    return JsonResponse({'status': 'failed', 'message': 'Method must be POST'}, status=400)
+
+
+@csrf_exempt
+def get_book_details(request):
+    user = Person.objects.filter(user=request.user).values().first()
+    
+    checkouts = Checkout.objects.select_related().filter(user=request.user)
+
+    checkout_books = [{'id': checkout.book.pk, 'title': checkout.book.title, 'author':checkout.book.author, 'publisher':checkout.book.publisher} for checkout in checkouts]
+
+    return JsonResponse({'checkout_books': checkout_books, 'user': user, 'status': 'success'})
