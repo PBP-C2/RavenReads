@@ -75,7 +75,6 @@ def get_session_data(request):
     data_from_session = request.session.get('recently_made', [])
     return JsonResponse({'data': data_from_session})
 
-<<<<<<< HEAD
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
@@ -103,5 +102,6 @@ def show_scroll_data_json(request):
 def get_product_json(request):
     product_item = Scroll.objects.all()
     return HttpResponse(serializers.serialize('json', product_item))
-=======
->>>>>>> e4358d00909b62aeb3fefa2bd3de3dec3bc22e24
+
+
+    
