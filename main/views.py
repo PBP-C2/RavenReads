@@ -513,7 +513,7 @@ def get_person_name_flutter(request, id):
 
 
 
-
+@csrf_exempt
 def add_book_flutter(request):
     if request.method == 'POST':
         book_id = request.POST.get("book_id")
