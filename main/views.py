@@ -513,24 +513,25 @@ def get_person_name_flutter(request, id):
 
 
 
-
+@csrf_exempt
 def add_book_flutter(request):
     if request.method == 'POST':
         book_id = request.POST.get("book_id")
         book = Book.objects.get(pk=book_id)
         user = request.user
+        # print(user)
 
         new_checkout = Checkout(user=user, book=book)
         new_checkout.save()
 
         return JsonResponse({'status': 'success','message':"Checkout added"}, status=201)
 
-    return JsonResponse({'status': 'failed'}, status=400)
+    return JsonResponse({'status': 'failed', 'message': 'Method must be POST'}, status=400)
 
 
 @csrf_exempt
 def get_book_details(request):
-    user = Person.objects.filter(user =request.user).values().first()
+    user = Person.objects.filter(user=request.user).values().first()
     
     checkouts = Checkout.objects.select_related().filter(user=request.user)
 
