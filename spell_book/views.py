@@ -102,3 +102,9 @@ def show_scroll_data_json(request):
 def get_product_json(request):
     product_item = Scroll.objects.all()
     return HttpResponse(serializers.serialize('json', product_item))
+<<<<<<< HEAD
+=======
+
+
+    
+>>>>>>> a1bd34001fbf1401ae25de7c9b8ac7987319eaa9
